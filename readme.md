@@ -1,5 +1,7 @@
 # One Thing Gnome Extension
 
+Put a single task or goal in your menu bar.
+
 # Manual installation notes
 
 - Run **make** (or **make all**) from the project folder to compile the schema
