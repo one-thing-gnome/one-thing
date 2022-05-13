@@ -35,7 +35,7 @@ class _Calculator extends PanelMenu.Button {
       track_hover: true,
       can_focus: true,
       y_align: Clutter.ActorAlign.CENTER,
-      style_class: 'pcalc-expr-entry'
+      style_class: 'one-thing-expr-entry'
     });
 
     EntryMenu.addContextMenu(this._exprEntry);
@@ -71,7 +71,7 @@ _initPopup () { // popup will have secondary expression entry field and help con
   _addSubmenuHelp(title, helpTextFn) {
     const label = new St.Label({
       text: helpTextFn(),
-      style_class: 'pcalc-help-text'
+      style_class: 'one-thing-help-text'
     });
 
     const subMenuBaseItem = new PopupMenu.PopupBaseMenuItem({
@@ -132,7 +132,7 @@ _initPopup () { // popup will have secondary expression entry field and help con
 
   _exprEntry2StyleClass () {
     return this._settings.get_boolean('show-help-on-popup')
-      ? 'pcalc-expr-entry2-with-help' : 'pcalc-expr-entry2-no-help';
+      ? 'one-thing-expr-entry2-with-help' : 'one-thing-expr-entry2-no-help';
   }
 
   _settingsChanged () {
