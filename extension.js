@@ -11,7 +11,7 @@ function init () {
 
 function enable () {
   calculator = new Calculator;
-  Main.panel.addToStatusArea('pcalc', calculator);
+  Main.panel.addToStatusArea('one-thing-area', calculator);
 }
 
 function disable () {
