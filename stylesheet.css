@@ -1,0 +1,19 @@
+.pcalc-expr-entry {
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+.pcalc-expr-entry2-with-help {
+    font-size: 120%;
+    width: 360px;
+}
+
+.pcalc-expr-entry2-no-help {
+    font-size: 120%;
+}
+
+.pcalc-help-text {
+    color: #447799;
+    /*a color that looks OK on dark or light background and hopefully easier to
+      read than the default "disabled" grey color*/
+}
