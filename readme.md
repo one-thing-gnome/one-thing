@@ -2,7 +2,21 @@
 
 Put a single task or goal in your menu bar.
 
-# Manual installation notes
+### Screenshots
+
+![One Thing at Panel](./.github/screenshots/one-thing_2.png)
+
+---
+
+![One Thing at Panel with editor](./.github/screenshots/one-thing_1.png)
+
+### Create Zip File
+
+```
+zip -r one-thing@github.com.zip * -x .git/*
+```
+
+### Manual installation notes
 
 - Run **make** (or **make all**) from the project folder to compile the schema
 - Place the folder in **~/.local/share/gnome-shell/extensions**
