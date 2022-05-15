@@ -13,7 +13,7 @@ Put a single task or goal in your menu bar.
 ### Create Zip File
 
 ```
-zip -r one-thing@github.com.zip * -x .git/* .github/*
+zip -r one-thing@github.com.zip * -x .git/* .github/* Makefile
 ```
 
 ### Manual installation notes
