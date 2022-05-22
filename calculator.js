@@ -46,11 +46,19 @@ class _Calculator extends PanelMenu.Button {
       'visible',
       Gio.SettingsBindFlags.DEFAULT
     );
+    
+    this._settings.bind(
+      'thing-value',
+      this._exprEntry,
+      'text',
+      Gio.SettingsBindFlags.DEFAULT
+    );
   }
 
 _initPopup () { // popup will have secondary expression entry field and help content
     this._exprEntry2 = new St.Entry({
       hint_text: 'Write One Thing',
+      text: this._settings.get_string('thing-value'), 
       track_hover: true,
       can_focus: true,
       style_class: this._exprEntry2StyleClass(),
@@ -112,13 +120,13 @@ _initPopup () { // popup will have secondary expression entry field and help con
     this._exprEntry2.clutter_text.connect('activate', this._onActivateEntry.bind(this));
   }
 
-  _onButtonReleaseEntry (actor, event) {
+  _onButtonReleaseEntry (actor) {
     if (actor.get_cursor_position() !== -1 && actor.get_selection().length === 0) {
       actor.set_selection(0, actor.get_text().length); // doesn't work to do this on button-press-event or key_focus_in; don't know why
     }
   }
 
-  _onActivateEntry (actor, event) {
+  _onActivateEntry (actor) {
     let result;
     try {
       const expr = actor.get_text();

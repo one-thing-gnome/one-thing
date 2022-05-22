@@ -9,7 +9,7 @@
       <default>true</default>
     </key>
     <key name="thing-value" type="s">
-      <default>'One THing'</default>
+      <default>'One Thing'</default>
     </key>
   </schema>
 </schemalist>
