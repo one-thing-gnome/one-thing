@@ -2,6 +2,11 @@
 
 Put a single task or goal in your menu bar.
 
+
+### Install
+
+Install from https://extensions.gnome.org/extension/5072/one-thing/
+
 ### Screenshots
 
 ![One Thing at Panel](./.github/screenshots/one-thing_2.png)
@@ -16,7 +21,7 @@ Put a single task or goal in your menu bar.
 zip -r one-thing@github.com.zip * -x .git/* .github/* Makefile
 ```
 
-### Manual installation notes
+### Manual installation notes (great for development)
 
 - Run **make** (or **make all**) from the project folder to compile the schema
 - Place the folder in **~/.local/share/gnome-shell/extensions**
