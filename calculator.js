@@ -31,7 +31,7 @@ class _Calculator extends PanelMenu.Button {
 
   _initEntry () { // panel expression entry field
     this._exprEntry = new St.Label({
-      text: 'One Thing',
+      text: this._settings.get_string('thing-value'),
       track_hover: true,
       can_focus: true,
       y_align: Clutter.ActorAlign.CENTER,

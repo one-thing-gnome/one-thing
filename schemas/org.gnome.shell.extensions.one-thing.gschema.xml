@@ -8,5 +8,8 @@
     <key name="show-help-on-popup" type="b">
       <default>true</default>
     </key>
+    <key name="thing-value" type="s">
+      <default>'One THing'</default>
+    </key>
   </schema>
 </schemalist>
