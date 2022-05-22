@@ -3,6 +3,5 @@
   "name": "One Thing",
   "shell-version": ["3.36", "3.38", "40", "@shell_current@"],
   "url": "https://github.com/dantehemerson/one-thing",
-  "uuid": "one-thing@github.com",
-  "version": 2
+  "uuid": "one-thing@github.com"
 }
