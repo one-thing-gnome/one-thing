@@ -1,4 +1,4 @@
-const {St, GObject, Clutter, Gio} = imports.gi;
+const { St, GObject, Clutter, Gio } = imports.gi;
 const PanelMenu = imports.ui.panelMenu;
 const PopupMenu = imports.ui.popupMenu;
 const ExtensionUtils = imports.misc.extensionUtils;
@@ -7,10 +7,12 @@ const Me = ExtensionUtils.getCurrentExtension();
 const EntryMenu = Me.imports.entryMenu;
 
 class _Calculator extends PanelMenu.Button {
-  _init () {
-    super._init(0, 'Calculator', false);
+  constructor() {
+    super(0, "Calculator", false);
 
-    this._settings = ExtensionUtils.getSettings('org.gnome.shell.extensions.one-thing');
+    this._settings = ExtensionUtils.getSettings(
+      "org.gnome.shell.extensions.one-thing"
+    );
 
     // panel expression entry field
     this._initEntry();
@@ -29,36 +31,38 @@ class _Calculator extends PanelMenu.Button {
     this._initEvents();
   }
 
-  _initEntry () { // panel expression entry field
+  _initEntry() {
+    // panel expression entry field
     this._exprEntry = new St.Label({
-      text: this._settings.get_string('thing-value'),
+      text: this._settings.get_string("thing-value"),
       track_hover: true,
       can_focus: true,
       y_align: Clutter.ActorAlign.CENTER,
-      style_class: 'one-thing-expr-entry'
+      style_class: "one-thing-expr-entry",
     });
 
     EntryMenu.addContextMenu(this._exprEntry);
 
     this._settings.bind(
-      'allow-entry-on-panel',
+      "allow-entry-on-panel",
       this._exprEntry,
-      'visible',
+      "visible",
       Gio.SettingsBindFlags.DEFAULT
     );
-    
+
     this._settings.bind(
-      'thing-value',
+      "thing-value",
       this._exprEntry,
-      'text',
+      "text",
       Gio.SettingsBindFlags.DEFAULT
     );
   }
 
-_initPopup () { // popup will have secondary expression entry field and help content
+  _initPopup() {
+    // popup will have secondary expression entry field and help content
     this._exprEntry2 = new St.Entry({
-      hint_text: 'Write One Thing',
-      text: this._settings.get_string('thing-value'), 
+      hint_text: "Write One Thing",
+      text: this._settings.get_string("thing-value"),
       track_hover: true,
       can_focus: true,
       style_class: this._exprEntry2StyleClass(),
@@ -79,76 +83,92 @@ _initPopup () { // popup will have secondary expression entry field and help con
   _addSubmenuHelp(title, helpTextFn) {
     const label = new St.Label({
       text: helpTextFn(),
-      style_class: 'one-thing-help-text'
+      style_class: "one-thing-help-text",
     });
 
     const subMenuBaseItem = new PopupMenu.PopupBaseMenuItem({
-      reactive: false
+      reactive: false,
     });
-    
+
     subMenuBaseItem.add_actor(label);
     const subMenuItem = new PopupMenu.PopupSubMenuMenuItem(title, true);
     subMenuItem.menu.addMenuItem(subMenuBaseItem);
     this.menu.addMenuItem(subMenuItem);
 
     this._settings.bind(
-      'show-help-on-popup',
+      "show-help-on-popup",
       subMenuItem,
-      'visible',
+      "visible",
       Gio.SettingsBindFlags.DEFAULT
     );
   }
 
-  _initIcon () { // panel icon
-    this._settings.connect('changed', this._settingsChanged.bind(this));
+  _initIcon() {
+    // panel icon
+    this._settings.connect("changed", this._settingsChanged.bind(this));
   }
 
-  _initContainer () { // container for entry and icon elements
+  _initContainer() {
+    // container for entry and icon elements
     const calcBox = new St.BoxLayout();
     calcBox.add(this._exprEntry);
     this.add_actor(calcBox);
   }
 
-  _initEvents () { // events:
-    this.connect('button-press-event', function () {
-      if (this.menu.isOpen) {
-        this._exprEntry2.grab_key_focus();
-      }
-    }.bind(this));
+  _initEvents() {
+    // events:
+    this.connect(
+      "button-press-event",
+      function () {
+        if (this.menu.isOpen) {
+          this._exprEntry2.grab_key_focus();
+        }
+      }.bind(this)
+    );
 
-    this._exprEntry2.clutter_text.connect('button-release-event', this._onButtonReleaseEntry.bind(this));
-    this._exprEntry2.clutter_text.connect('activate', this._onActivateEntry.bind(this));
+    this._exprEntry2.clutter_text.connect(
+      "button-release-event",
+      this._onButtonReleaseEntry.bind(this)
+    );
+    this._exprEntry2.clutter_text.connect(
+      "activate",
+      this._onActivateEntry.bind(this)
+    );
   }
 
-  _onButtonReleaseEntry (actor) {
-    if (actor.get_cursor_position() !== -1 && actor.get_selection().length === 0) {
+  _onButtonReleaseEntry(actor) {
+    if (
+      actor.get_cursor_position() !== -1 &&
+      actor.get_selection().length === 0
+    ) {
       actor.set_selection(0, actor.get_text().length); // doesn't work to do this on button-press-event or key_focus_in; don't know why
     }
   }
 
-  _onActivateEntry (actor) {
+  _onActivateEntry(actor) {
     let result;
     try {
       const expr = actor.get_text();
       result = expr.toString();
     } catch (e) {
-        result = 'Unexpected error';
+      result = "Unexpected error";
     }
     this._exprEntry.set_text(result);
     this.menu.close();
   }
 
-  _exprEntry2StyleClass () {
-    return this._settings.get_boolean('show-help-on-popup')
-      ? 'one-thing-expr-entry2-with-help' : 'one-thing-expr-entry2-no-help';
+  _exprEntry2StyleClass() {
+    return this._settings.get_boolean("show-help-on-popup")
+      ? "one-thing-expr-entry2-with-help"
+      : "one-thing-expr-entry2-no-help";
   }
 
-  _settingsChanged () {
+  _settingsChanged() {
     this._exprEntry2.style_class = this._exprEntry2StyleClass();
   }
 
-  _generalHelpText () {
-    return '\
+  _generalHelpText() {
+    return "\
 An example of an expression is 2+4*8, which means\n\
 multiply 4 by 8 and add 2 to the result.\n\
 \n\
@@ -164,8 +184,8 @@ Use parentheses to override operator precedence; e.g.,\n\
 \n\
 Numbers can have a 0b, 0o or 0x prefix, or can be\n\
 specified in scientific E notation; e.g., 0b11011001,\n\
-0o331, 0xd9 and 2.17e+2 all specify the number 217.';
+0o331, 0xd9 and 2.17e+2 all specify the number 217.";
   }
 }
 
-const Calculator = GObject.registerClass(_Calculator);
+var Calculator = GObject.registerClass(_Calculator);
