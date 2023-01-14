@@ -9,7 +9,6 @@ const Calculator = Me.imports.calculator.Calculator;
 let gschema;
 let calculator;
 let layout;
-let isLoaded = false;
 
 var settings;
 
@@ -66,13 +65,10 @@ function enable() {
   layout.add_child(calculator.get_parent());
 
   Main.extensionManager.connect("extension-loaded", () => {
-    isLoaded = true;
     this.insertChildToPanel();
   });
 
-  if (!isLoaded) {
-    this.insertChildToPanel();
-  }
+  this.insertChildToPanel();
   // log("methods " + JSON.stringify(Object.keys(extension-loaded)));
 }
 
@@ -90,7 +86,6 @@ function insertChildToPanel() {
       })
   );
 
-  log("AYUDDDDA");
   log(layout.get_parent());
 
   if (layout.get_parent()) {
@@ -101,7 +96,6 @@ function insertChildToPanel() {
 }
 
 function disable() {
-  isLoaded = false;
   if (calculator) {
     calculator.destroy();
     calculator = null;
