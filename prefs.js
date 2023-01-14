@@ -1,5 +1,6 @@
 const Gio = imports.gi.Gio;
 const Gtk = imports.gi.Gtk;
+const GObject = imports.gi.GObject;
 const ExtensionUtils = imports.misc.extensionUtils;
 
 function init() {}
@@ -42,61 +43,39 @@ function buildPrefsWidget() {
     });
   }
 
-  _makeToggleRow(
-    settings,
-    "show-settings-button-on-popup",
-    'Show "Settings" on the popup',
-    1,
-    widget
-  );
-
-  addIndexWidget(widget, 2);
-  addLocationWidget(widget, 3);
+  addLocationWidget(widget, 1, settings);
+  addIndexWidget(widget, 2, settings);
+  addShowSettingSwitchWidget(widget, 3, settings);
 
   return widget;
 }
 
-function _makeToggleRow(settings, settingId, settingLabel, rowNum, widget) {
-  const label = new Gtk.Label({
-    label: settingLabel,
+function addShowSettingSwitchWidget(parentWidget, rowNum, settings) {
+  const leftWidget = new Gtk.Label({
+    label: 'Show "Settings" on the popup',
     halign: Gtk.Align.START,
     margin_end: 30,
     hexpand: true,
     visible: true,
   });
 
-  const toggle = new Gtk.Switch({
-    active: settings.get_boolean(settingId),
+  const rightWidget = new Gtk.Switch({
+    active: settings.get_boolean("show-settings-button-on-popup"),
     halign: Gtk.Align.END,
     visible: true,
   });
 
-  settings.bind(settingId, toggle, "active", Gio.SettingsBindFlags.DEFAULT);
+  settings.bind(
+    "show-settings-button-on-popup",
+    rightWidget,
+    "active",
+    Gio.SettingsBindFlags.DEFAULT
+  );
 
-  if (widget instanceof Gtk.ListBox) {
-    const hbox = new Gtk.Box({
-      orientation: Gtk.Orientation.HORIZONTAL,
-      spacing: 10,
-      margin_start: 10,
-      margin_end: 10,
-      margin_top: 16,
-      margin_bottom: 16,
-    });
-
-    const row = new Gtk.ListBoxRow({
-      child: hbox,
-    });
-
-    hbox.append(label);
-    hbox.append(toggle);
-    widget.append(row);
-  } else {
-    widget.attach(label, 0, rowNum, 1, 1);
-    widget.attach(toggle, 1, rowNum, 1, 1);
-  }
+  addWidgetsAsRow(parentWidget, leftWidget, rightWidget, rowNum);
 }
 
-function addIndexWidget(parentWidget, rowNum) {
+function addIndexWidget(parentWidget, rowNum, settings) {
   const leftWidget = new Gtk.Label({
     label: "Index in status bar:",
     halign: Gtk.Align.START,
@@ -111,10 +90,17 @@ function addIndexWidget(parentWidget, rowNum) {
     halign: Gtk.Align.END,
   });
 
+  settings.bind(
+    "index-in-status-bar",
+    rightWidget,
+    "value",
+    Gio.SettingsBindFlags.DEFAULT
+  );
+
   addWidgetsAsRow(parentWidget, leftWidget, rightWidget, rowNum);
 }
 
-function addLocationWidget(parentWidget, rowNum) {
+function addLocationWidget(parentWidget, rowNum, settings) {
   const leftWidget = new Gtk.Label({
     label: "Location in status bar:",
     halign: Gtk.Align.START,
@@ -123,11 +109,33 @@ function addLocationWidget(parentWidget, rowNum) {
     visible: true,
   });
 
-  let rightWidget = new Gtk.SpinButton({
-    adjustment: new Gtk.Adjustment({ lower: 0, upper: 10, step_increment: 1 }),
+  let options = [{ name: "Left" }, { name: "Center" }, { name: "Right" }];
+
+  let listStore = new Gtk.ListStore();
+
+  listStore.set_column_types([GObject.TYPE_STRING]);
+  for (let i = 0; i < options.length; i++) {
+    let option = options[i];
+    const iter = listStore.append();
+    listStore.set(iter, [0], [option.name]);
+  }
+
+  let rightWidget = new Gtk.ComboBox({
+    model: listStore,
     visible: true,
     halign: Gtk.Align.END,
   });
+
+  let rendererText = new Gtk.CellRendererText();
+  rightWidget.pack_start(rendererText, false);
+  rightWidget.add_attribute(rendererText, "text", 0);
+
+  settings.bind(
+    "location-in-status-bar",
+    rightWidget,
+    "active",
+    Gio.SettingsBindFlags.DEFAULT
+  );
 
   addWidgetsAsRow(parentWidget, leftWidget, rightWidget, rowNum);
 }

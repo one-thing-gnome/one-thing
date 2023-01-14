@@ -6,8 +6,9 @@
       <default>true</default>
     </key>
     <!-- Values: 0(Left), 1(Center), 2(Right) -->
-    <key name="location-in-status-bar" type="i">
-      <default>0</default>
+    <key name="location-in-status-bar" type="i" >
+        <default>2</default>
+        <range min="0" max="2"/>
     </key>
     <key name="index-in-status-bar" type="i">
       <default>2</default>
