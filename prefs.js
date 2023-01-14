@@ -44,19 +44,13 @@ function buildPrefsWidget() {
 
   _makeToggleRow(
     settings,
-    "allow-entry-on-panel",
-    "Enable entry of expressions directly on the panel",
-    0,
-    widget
-  );
-
-  _makeToggleRow(
-    settings,
     "show-settings-button-on-popup",
     'Show "Settings" on the popup',
     1,
     widget
   );
+
+  addIndexWidget(widget, 2);
 
   return widget;
 }
@@ -98,5 +92,45 @@ function _makeToggleRow(settings, settingId, settingLabel, rowNum, widget) {
   } else {
     widget.attach(label, 0, rowNum, 1, 1);
     widget.attach(toggle, 1, rowNum, 1, 1);
+  }
+}
+
+function addIndexWidget(widget, rowNum) {
+  const leftWidget = new Gtk.Label({
+    label: "Index in status bar:",
+    halign: Gtk.Align.START,
+    margin_end: 30,
+    hexpand: true,
+    visible: true,
+  });
+
+  let rightWidget = new Gtk.SpinButton({
+    adjustment: new Gtk.Adjustment({ lower: 0, upper: 10, step_increment: 1 }),
+    visible: true,
+    halign: Gtk.Align.END,
+  });
+
+  widget.attach(leftWidget, 0, rowNum, 1, 1);
+
+  if (widget instanceof Gtk.ListBox) {
+    const hbox = new Gtk.Box({
+      orientation: Gtk.Orientation.HORIZONTAL,
+      spacing: 10,
+      margin_start: 10,
+      margin_end: 10,
+      margin_top: 16,
+      margin_bottom: 16,
+    });
+
+    const row = new Gtk.ListBoxRow({
+      child: hbox,
+    });
+
+    hbox.append(leftWidget);
+    hbox.append(rightWidget);
+    widget.append(row);
+  } else {
+    widget.attach(leftWidget, 0, rowNum, 1, 1);
+    widget.attach(rightWidget, 1, rowNum, 1, 1);
   }
 }
