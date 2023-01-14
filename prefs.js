@@ -52,7 +52,8 @@ function buildPrefsWidget() {
 
 function addShowSettingSwitchWidget(parentWidget, rowNum, settings) {
   const leftWidget = new Gtk.Label({
-    label: 'Show "Settings" on the popup',
+    label:
+      'Show "Settings" in popup window? *You can always access it in Extension Manager',
     halign: Gtk.Align.START,
     margin_end: 30,
     hexpand: true,
@@ -85,7 +86,7 @@ function addIndexWidget(parentWidget, rowNum, settings) {
   });
 
   let rightWidget = new Gtk.SpinButton({
-    adjustment: new Gtk.Adjustment({ lower: 0, upper: 10, step_increment: 1 }),
+    adjustment: new Gtk.Adjustment({ lower: 0, upper: 12, step_increment: 1 }),
     visible: true,
     halign: Gtk.Align.END,
   });

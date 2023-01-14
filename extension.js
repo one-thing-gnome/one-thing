@@ -40,8 +40,6 @@ function enable() {
     ),
   });
 
-  calculator = new Calculator();
-
   this.indexChanged = this.settings.connect(
     "changed::index-in-status-bar",
     () => {
@@ -58,18 +56,11 @@ function enable() {
     }
   );
 
-  layout = new St.BoxLayout({
-    style_class: "panel-button",
-    reactive: true,
-  });
-  layout.add_child(calculator.get_parent());
-
   Main.extensionManager.connect("extension-loaded", () => {
     this.insertChildToPanel();
   });
 
   this.insertChildToPanel();
-  // log("methods " + JSON.stringify(Object.keys(extension-loaded)));
 }
 
 function insertChildToPanel() {
@@ -86,20 +77,37 @@ function insertChildToPanel() {
       })
   );
 
-  log(layout.get_parent());
+  this.destroyWidgetInCaseExists();
+  this.destroyFromPanelInCaseExists();
 
-  if (layout.get_parent()) {
-    layout.get_parent().remove_child(layout);
+  calculator = new Calculator();
+  Main.panel.addToStatusArea("one-thing", calculator, index, location);
+}
+
+function destroyWidgetInCaseExists() {
+  try {
+    if (calculator) {
+      calculator.destroy();
+      calculator = null;
+    }
+  } catch (e) {
+    log("One-Thing: Error destroying calculator " + e);
   }
+}
 
-  Main.panel["_" + location + "Box"].insert_child_at_index(layout, index);
+function destroyFromPanelInCaseExists() {
+  try {
+    if (Main.panel.statusArea["one-thing"]) {
+      Main.panel.statusArea["one-thing"].destroy();
+    }
+  } catch (e) {
+    log("One-Thing: Error destroying from panel " + e);
+  }
 }
 
 function disable() {
-  if (calculator) {
-    calculator.destroy();
-    calculator = null;
-  }
+  this.destroyWidgetInCaseExists();
+  this.destroyFromPanelInCaseExists();
 
   // Disconnect
   this.settings.disconnect(this.indexChanged);
