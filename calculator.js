@@ -10,6 +10,22 @@ class _Calculator extends PanelMenu.Button {
   constructor() {
     super(0, "Calculator", false);
 
+    this._initialize();
+  }
+
+  _init() {
+    super._init(0, "Calculator", false);
+
+    this._initialize();
+  }
+
+  _initialize() {
+    if (this.initialized) {
+      return;
+    }
+
+    this.initialized = true;
+
     this._settings = ExtensionUtils.getSettings(
       "org.gnome.shell.extensions.one-thing"
     );
