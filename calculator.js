@@ -60,13 +60,6 @@ class _Calculator extends PanelMenu.Button {
     EntryMenu.addContextMenu(this.textInput);
 
     this._settings.bind(
-      "allow-entry-on-panel",
-      this.textInput,
-      "visible",
-      Gio.SettingsBindFlags.DEFAULT
-    );
-
-    this._settings.bind(
       "thing-value",
       this.textInput,
       "text",

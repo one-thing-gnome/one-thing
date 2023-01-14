@@ -126,6 +126,7 @@ function addIndexWidget(widget, rowNum) {
       child: hbox,
     });
 
+    // In case of error appending items https://github.com/raujonas/executor/blob/641ef4f64e35388995873c0e2c6cf8d7148879d3/prefs.js#L51
     hbox.append(leftWidget);
     hbox.append(rightWidget);
     widget.append(row);
