@@ -51,6 +51,7 @@ function buildPrefsWidget() {
   );
 
   addIndexWidget(widget, 2);
+  addLocationWidget(widget, 3);
 
   return widget;
 }
@@ -95,7 +96,7 @@ function _makeToggleRow(settings, settingId, settingLabel, rowNum, widget) {
   }
 }
 
-function addIndexWidget(widget, rowNum) {
+function addIndexWidget(parentWidget, rowNum) {
   const leftWidget = new Gtk.Label({
     label: "Index in status bar:",
     halign: Gtk.Align.START,
@@ -110,9 +111,31 @@ function addIndexWidget(widget, rowNum) {
     halign: Gtk.Align.END,
   });
 
-  widget.attach(leftWidget, 0, rowNum, 1, 1);
+  addWidgetsAsRow(parentWidget, leftWidget, rightWidget, rowNum);
+}
 
-  if (widget instanceof Gtk.ListBox) {
+function addLocationWidget(parentWidget, rowNum) {
+  const leftWidget = new Gtk.Label({
+    label: "Location in status bar:",
+    halign: Gtk.Align.START,
+    margin_end: 30,
+    hexpand: true,
+    visible: true,
+  });
+
+  let rightWidget = new Gtk.SpinButton({
+    adjustment: new Gtk.Adjustment({ lower: 0, upper: 10, step_increment: 1 }),
+    visible: true,
+    halign: Gtk.Align.END,
+  });
+
+  addWidgetsAsRow(parentWidget, leftWidget, rightWidget, rowNum);
+}
+
+function addWidgetsAsRow(parentWidget, leftWidget, rightWidget, rowNum) {
+  parentWidget.attach(leftWidget, 0, rowNum, 1, 1);
+
+  if (parentWidget instanceof Gtk.ListBox) {
     const hbox = new Gtk.Box({
       orientation: Gtk.Orientation.HORIZONTAL,
       spacing: 10,
@@ -129,9 +152,9 @@ function addIndexWidget(widget, rowNum) {
     // In case of error appending items https://github.com/raujonas/executor/blob/641ef4f64e35388995873c0e2c6cf8d7148879d3/prefs.js#L51
     hbox.append(leftWidget);
     hbox.append(rightWidget);
-    widget.append(row);
+    parentWidget.append(row);
   } else {
-    widget.attach(leftWidget, 0, rowNum, 1, 1);
-    widget.attach(rightWidget, 1, rowNum, 1, 1);
+    parentWidget.attach(leftWidget, 0, rowNum, 1, 1);
+    parentWidget.attach(rightWidget, 1, rowNum, 1, 1);
   }
 }
