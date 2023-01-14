@@ -2,7 +2,6 @@ const { St, GObject, Clutter, Gio } = imports.gi;
 const PanelMenu = imports.ui.panelMenu;
 const PopupMenu = imports.ui.popupMenu;
 const ExtensionUtils = imports.misc.extensionUtils;
-
 const Me = ExtensionUtils.getCurrentExtension();
 const EntryMenu = Me.imports.entryMenu;
 
