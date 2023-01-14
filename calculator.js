@@ -91,26 +91,32 @@ class _Calculator extends PanelMenu.Button {
     });
     menuItem.add_actor(this._exprEntry2);
     this.menu.addMenuItem(menuItem);
+
+    // this._addSubmenuHelp("General Help", this._generalHelpText);
+    this._addSubmenuSettings();
   }
 
-  _addSubmenuHelp(title, helpTextFn) {
-    const label = new St.Label({
-      text: helpTextFn(),
-      style_class: "one-thing-help-text",
+  _addSubmenuSettings() {
+    const settingsItem = new PopupMenu.PopupMenuItem("Settings");
+    settingsItem.connect("activate", () => {
+      ExtensionUtils.openPrefs();
     });
 
-    const subMenuBaseItem = new PopupMenu.PopupBaseMenuItem({
-      reactive: false,
-    });
+    const separatorItem = new PopupMenu.PopupSeparatorMenuItem();
 
-    subMenuBaseItem.add_actor(label);
-    const subMenuItem = new PopupMenu.PopupSubMenuMenuItem(title, true);
-    subMenuItem.menu.addMenuItem(subMenuBaseItem);
-    this.menu.addMenuItem(subMenuItem);
+    this.menu.addMenuItem(separatorItem);
+    this.menu.addMenuItem(settingsItem);
 
     this._settings.bind(
-      "show-help-on-popup",
-      subMenuItem,
+      "show-settings-button-on-popup",
+      settingsItem,
+      "visible",
+      Gio.SettingsBindFlags.DEFAULT
+    );
+
+    this._settings.bind(
+      "show-settings-button-on-popup",
+      separatorItem,
       "visible",
       Gio.SettingsBindFlags.DEFAULT
     );
@@ -171,7 +177,7 @@ class _Calculator extends PanelMenu.Button {
   }
 
   _exprEntry2StyleClass() {
-    return this._settings.get_boolean("show-help-on-popup")
+    return this._settings.get_boolean("show-settings-button-on-popup")
       ? "one-thing-expr-entry2-with-help"
       : "one-thing-expr-entry2-no-help";
   }

@@ -5,7 +5,7 @@
     <key name="allow-entry-on-panel" type="b">
       <default>true</default>
     </key>
-    <key name="show-help-on-popup" type="b">
+    <key name="show-settings-button-on-popup" type="b">
       <default>true</default>
     </key>
     <key name="thing-value" type="s">
