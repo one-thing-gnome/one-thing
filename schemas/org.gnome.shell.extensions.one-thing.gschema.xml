@@ -2,11 +2,16 @@
 <schemalist>
   <schema id="org.gnome.shell.extensions.one-thing" path="/org/gnome/shell/extensions/one-thing/">
     <!-- See also: https://developer.gnome.org/glib/stable/gvariant-format-strings.html -->
-    <key name="allow-entry-on-panel" type="b">
+    <key name="show-settings-button-on-popup" type="b">
       <default>true</default>
     </key>
-    <key name="show-help-on-popup" type="b">
-      <default>true</default>
+    <!-- Values: 0(Left), 1(Center), 2(Right) -->
+    <key name="location-in-status-bar" type="i" >
+        <default>2</default>
+        <range min="0" max="2"/>
+    </key>
+    <key name="index-in-status-bar" type="i">
+      <default>2</default>
     </key>
     <key name="thing-value" type="s">
       <default>'One Thing'</default>
