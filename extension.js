@@ -2,20 +2,15 @@ const Main = imports.ui.main;
 const Gio = imports.gi.Gio;
 const ExtensionUtils = imports.misc.extensionUtils;
 const St = imports.gi.St;
-
 const Me = ExtensionUtils.getCurrentExtension();
 const Widget = Me.imports.widget.Widget;
 
-let gschema;
 let widget;
 let layout;
 
 var settings;
-
-var lastIndex = null;
 var indexChanged = null;
 var locationChanged = null;
-
 var LOCATION_BY_INDEX = {
   0: "left",
   1: "center",
@@ -27,7 +22,7 @@ function init() {}
 function enable() {
   log("One-Thing enabled");
 
-  gschema = Gio.SettingsSchemaSource.new_from_directory(
+  const gschema = Gio.SettingsSchemaSource.new_from_directory(
     Me.dir.get_child("schemas").get_path(),
     Gio.SettingsSchemaSource.get_default(),
     false
@@ -40,22 +35,14 @@ function enable() {
     ),
   });
 
-  this.indexChanged = this.settings.connect(
-    "changed::index-in-status-bar",
-    () => {
-      log("One-Thing: Index Changed");
+  ["index-in-status-bar", "location-in-status-bar"].forEach((key) => {
+    this.indexChanged = this.settings.connect("changed::" + key, () => {
+      log("Settings changed: " + key);
       this.insertChildToPanel();
-    }
-  );
+    });
+  });
 
-  this.locationChanged = this.settings.connect(
-    "changed::location-in-status-bar",
-    () => {
-      log("One-Thing: Location Changed");
-      this.insertChildToPanel();
-    }
-  );
-
+  // Workaround to possionate the widget after all extensions are loaded
   Main.extensionManager.connect("extension-loaded", () => {
     this.insertChildToPanel();
   });
@@ -69,45 +56,29 @@ function insertChildToPanel() {
 
   const location = LOCATION_BY_INDEX[locationIndex];
 
-  log(
-    "One-Thing: Settings changed: " +
-      JSON.stringify({
-        index: index,
-        location: LOCATION_BY_INDEX[locationIndex],
-      })
-  );
-
-  this.destroyWidgetInCaseExists();
-  this.destroyFromPanelInCaseExists();
+  this.destroyWidgetFromPanel();
 
   widget = new Widget();
   Main.panel.addToStatusArea("one-thing", widget, index, location);
 }
 
-function destroyWidgetInCaseExists() {
+function destroyWidgetFromPanel() {
   try {
     if (widget) {
       widget.destroy();
       widget = null;
     }
-  } catch (e) {
-    log("One-Thing: Error destroying widget " + e);
-  }
-}
 
-function destroyFromPanelInCaseExists() {
-  try {
     if (Main.panel.statusArea["one-thing"]) {
       Main.panel.statusArea["one-thing"].destroy();
     }
   } catch (e) {
-    log("One-Thing: Error destroying from panel " + e);
+    log("One-Thing: Error destroying widget from the panel " + e);
   }
 }
 
 function disable() {
-  this.destroyWidgetInCaseExists();
-  this.destroyFromPanelInCaseExists();
+  this.destroyWidgetFromPanel();
 
   // Disconnect
   this.settings.disconnect(this.indexChanged);

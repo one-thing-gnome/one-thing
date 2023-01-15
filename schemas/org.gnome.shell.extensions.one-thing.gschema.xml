@@ -11,7 +11,7 @@
         <range min="0" max="2"/>
     </key>
     <key name="index-in-status-bar" type="i">
-      <default>2</default>
+      <default>0</default>
     </key>
     <key name="thing-value" type="s">
       <default>'One Thing'</default>

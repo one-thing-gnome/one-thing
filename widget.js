@@ -35,10 +35,6 @@ class _Widget extends PanelMenu.Button {
     // popup; will have secondary expression entry field and help content
     this._initPopup();
 
-    // panel icon
-    // (do after settings bindings have been made)
-    this._initIcon();
-
     // container (box) for entry and icon elements
     this._initContainer();
 
@@ -47,44 +43,41 @@ class _Widget extends PanelMenu.Button {
   }
 
   _initEntry() {
-    // panel expression entry field
-    this.textInput = new St.Label({
+    this.panelText = new St.Label({
       text: this._settings.get_string("thing-value"),
       track_hover: true,
       can_focus: true,
       y_align: Clutter.ActorAlign.CENTER,
-      style_class: "one-thing-expr-entry",
+      style_class: "one-thing-panel-text",
     });
 
-    EntryMenu.addContextMenu(this.textInput);
+    EntryMenu.addContextMenu(this.panelText);
 
     this._settings.bind(
       "thing-value",
-      this.textInput,
+      this.panelText,
       "text",
       Gio.SettingsBindFlags.DEFAULT
     );
   }
 
   _initPopup() {
-    // popup will have secondary expression entry field and help content
-    this._exprEntry2 = new St.Entry({
+    this.inputText = new St.Entry({
       hint_text: "Write One Thing",
       text: this._settings.get_string("thing-value"),
       track_hover: true,
       can_focus: true,
-      style_class: this._exprEntry2StyleClass(),
+      style_class: "one-thing-input",
     });
 
-    EntryMenu.addContextMenu(this._exprEntry2);
+    EntryMenu.addContextMenu(this.inputText);
 
     const menuItem = new PopupMenu.PopupBaseMenuItem({
       reactive: false,
     });
-    menuItem.add_actor(this._exprEntry2);
+    menuItem.add_actor(this.inputText);
     this.menu.addMenuItem(menuItem);
 
-    // this._addSubmenuHelp("General Help", this._generalHelpText);
     this._addSubmenuSettings();
   }
 
@@ -114,15 +107,10 @@ class _Widget extends PanelMenu.Button {
     );
   }
 
-  _initIcon() {
-    // panel icon
-    this._settings.connect("changed", this._settingsChanged.bind(this));
-  }
-
   _initContainer() {
     // container for entry and icon elements
     const calcBox = new St.BoxLayout();
-    calcBox.add(this.textInput);
+    calcBox.add(this.panelText);
     this.add_actor(calcBox);
   }
 
@@ -132,16 +120,17 @@ class _Widget extends PanelMenu.Button {
       "button-press-event",
       function () {
         if (this.menu.isOpen) {
-          this._exprEntry2.grab_key_focus();
+          this.inputText.grab_key_focus();
         }
       }.bind(this)
     );
 
-    this._exprEntry2.clutter_text.connect(
+    this.inputText.clutter_text.connect(
       "button-release-event",
       this._onButtonReleaseEntry.bind(this)
     );
-    this._exprEntry2.clutter_text.connect(
+
+    this.inputText.clutter_text.connect(
       "activate",
       this._onActivateEntry.bind(this)
     );
@@ -164,18 +153,8 @@ class _Widget extends PanelMenu.Button {
     } catch (e) {
       result = "Unexpected error";
     }
-    this.textInput.set_text(result);
+    this.panelText.set_text(result);
     this.menu.close();
-  }
-
-  _exprEntry2StyleClass() {
-    return this._settings.get_boolean("show-settings-button-on-popup")
-      ? "one-thing-expr-entry2-with-help"
-      : "one-thing-expr-entry2-no-help";
-  }
-
-  _settingsChanged() {
-    this._exprEntry2.style_class = this._exprEntry2StyleClass();
   }
 }
 
