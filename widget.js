@@ -5,15 +5,15 @@ const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
 const EntryMenu = Me.imports.entryMenu;
 
-class _Calculator extends PanelMenu.Button {
+class _Widget extends PanelMenu.Button {
   constructor() {
-    super(0, "Calculator", false);
+    super(0, "AppWidget", false);
 
     this._initialize();
   }
 
   _init() {
-    super._init(0, "Calculator", false);
+    super._init(0, "AppWidget", false);
 
     this._initialize();
   }
@@ -179,4 +179,4 @@ class _Calculator extends PanelMenu.Button {
   }
 }
 
-var Calculator = GObject.registerClass(_Calculator);
+var Widget = GObject.registerClass(_Widget);

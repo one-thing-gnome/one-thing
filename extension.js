@@ -4,10 +4,10 @@ const ExtensionUtils = imports.misc.extensionUtils;
 const St = imports.gi.St;
 
 const Me = ExtensionUtils.getCurrentExtension();
-const Calculator = Me.imports.calculator.Calculator;
+const Widget = Me.imports.widget.Widget;
 
 let gschema;
-let calculator;
+let widget;
 let layout;
 
 var settings;
@@ -80,18 +80,18 @@ function insertChildToPanel() {
   this.destroyWidgetInCaseExists();
   this.destroyFromPanelInCaseExists();
 
-  calculator = new Calculator();
-  Main.panel.addToStatusArea("one-thing", calculator, index, location);
+  widget = new Widget();
+  Main.panel.addToStatusArea("one-thing", widget, index, location);
 }
 
 function destroyWidgetInCaseExists() {
   try {
-    if (calculator) {
-      calculator.destroy();
-      calculator = null;
+    if (widget) {
+      widget.destroy();
+      widget = null;
     }
   } catch (e) {
-    log("One-Thing: Error destroying calculator " + e);
+    log("One-Thing: Error destroying widget " + e);
   }
 }
 
