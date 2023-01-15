@@ -110,9 +110,16 @@ class _Widget extends PanelMenu.Button {
   _initContainer() {
     // container for entry and icon elements
     const calcBox = new St.BoxLayout();
+
+    let path = Me.dir
+      .get_child("assets")
+      .get_child("one-thing-gnome.svg")
+      .get_path();
+
     this.icon = new St.Icon({
-      style_class: "system-status-icon",
-      icon_name: "text-editor-symbolic",
+      icon_name: "one-thing-gnome",
+      icon_size: 24,
+      gicon: Gio.icon_new_for_string(path),
     });
 
     calcBox.add(this.icon);
