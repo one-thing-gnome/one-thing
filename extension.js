@@ -40,7 +40,6 @@ function enable() {
     "location-in-status-bar",
   ].map((key) => {
     return this.settings.connect("changed::" + key, () => {
-      log("Settings changed: " + key);
       this.insertChildToPanel();
     });
   });
@@ -83,9 +82,6 @@ function destroyWidgetFromPanel() {
 function disable() {
   this.destroyWidgetFromPanel();
 
-  log("SINGALS:");
-  log(this.indexChanged);
-  log(this.locationChanged);
   // Disconnect
   this.settings.disconnect(this.indexChanged);
   this.settings.disconnect(this.locationChanged);
