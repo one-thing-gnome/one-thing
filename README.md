@@ -18,7 +18,6 @@ You can install this extension from the gnome extension store: https://extension
 
   <img src="./.github/screenshots/one-thing_1.png" alt="drawing" width="600"/>
 
-
 - **Preferences Window**: You can control the position of the task in the top bar
 
   <img src="./.github/screenshots/one-thing_3.png" alt="drawing" width="600"/>
@@ -28,7 +27,7 @@ You can install this extension from the gnome extension store: https://extension
 ### Create Zip File to be published
 
 ```
-zip -r one-thing@github.com.zip * -x .git/* .github/* Makefile
+zip -r one-thing@github.com.zip * -x .git/* .github/* Makefile README.md
 ```
 
 ### Manual installation notes (great for development)
