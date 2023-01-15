@@ -10,20 +10,18 @@ You can install this extension from the gnome extension store: https://extension
 
 ### Screenshots
 
-- Task View:
+- **Task View**:
 
-  ![One Thing at Panel](./.github/screenshots/one-thing_2.png)
+  <img src="./.github/screenshots/one-thing_2.png" alt="drawing" width="600"/>
 
----
+- **Edit Task**: Easly edit your task.
 
-- Edit Task: Easly edit your task.
+  <img src="./.github/screenshots/one-thing_1.png" alt="drawing" width="600"/>
 
-  ![One Thing at Panel with editor](./.github/screenshots/one-thing_1.png)
 
----
+- **Preferences Window**: You can control the position of the task in the top bar
 
-- Preferences Window: You can control the position of the task in the top bar
-  ![One Thing at Panel with editor](./.github/screenshots/one-thing_3.png)
+  <img src="./.github/screenshots/one-thing_3.png" alt="drawing" width="600"/>
 
 ## Development
 
