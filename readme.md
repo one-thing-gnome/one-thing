@@ -1,21 +1,33 @@
-# One Thing Gnome Extension
+# One-Thing Gnome Extension
 
-Put a single task or goal in your menu bar.
+> Put a single task or goal in your menu bar.
 
+One-Thing is a productivity tool that helps you stay focused on one task at a time.
 
 ### Install
 
-Install from https://extensions.gnome.org/extension/5072/one-thing/
+You can install this extension from the gnome extension store: https://extensions.gnome.org/extension/5072/one-thing/
 
 ### Screenshots
 
-![One Thing at Panel](./.github/screenshots/one-thing_2.png)
+- Task View:
+
+  ![One Thing at Panel](./.github/screenshots/one-thing_2.png)
 
 ---
 
-![One Thing at Panel with editor](./.github/screenshots/one-thing_1.png)
+- Edit Task: Easly edit your task.
 
-### Create Zip File
+  ![One Thing at Panel with editor](./.github/screenshots/one-thing_1.png)
+
+---
+
+- Preferences Window: You can control the position of the task in the top bar
+  ![One Thing at Panel with editor](./.github/screenshots/one-thing_3.png)
+
+## Development
+
+### Create Zip File to be published
 
 ```
 zip -r one-thing@github.com.zip * -x .git/* .github/* Makefile
