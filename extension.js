@@ -20,8 +20,6 @@ var LOCATION_BY_INDEX = {
 function init() {}
 
 function enable() {
-  log("One-Thing enabled");
-
   settings = ExtensionUtils.getSettings("org.gnome.shell.extensions.one-thing");
 
   [indexChanged, locationChanged] = [
@@ -74,6 +72,4 @@ function disable() {
   settings.disconnect(locationChanged);
 
   settings = null;
-
-  log("One-Thing stopped");
 }
