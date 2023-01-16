@@ -22,43 +22,32 @@ function init() {}
 function enable() {
   log("One-Thing enabled");
 
-  const gschema = Gio.SettingsSchemaSource.new_from_directory(
-    Me.dir.get_child("schemas").get_path(),
-    Gio.SettingsSchemaSource.get_default(),
-    false
-  );
-
-  settings = new Gio.Settings({
-    settings_schema: gschema.lookup(
-      "org.gnome.shell.extensions.one-thing",
-      true
-    ),
-  });
+  settings = ExtensionUtils.getSettings("org.gnome.shell.extensions.one-thing");
 
   [indexChanged, locationChanged] = [
     "index-in-status-bar",
     "location-in-status-bar",
   ].map((key) => {
-    return this.settings.connect("changed::" + key, () => {
-      this.insertChildToPanel();
+    return settings.connect("changed::" + key, () => {
+      insertChildToPanel();
     });
   });
 
   // Workaround to possionate the widget after all extensions are loaded
   Main.extensionManager.connect("extension-loaded", () => {
-    this.insertChildToPanel();
+    insertChildToPanel();
   });
 
-  this.insertChildToPanel();
+  insertChildToPanel();
 }
 
 function insertChildToPanel() {
-  const index = this.settings.get_int("index-in-status-bar");
-  const locationIndex = this.settings.get_int("location-in-status-bar");
+  const index = settings.get_int("index-in-status-bar");
+  const locationIndex = settings.get_int("location-in-status-bar");
 
   const location = LOCATION_BY_INDEX[locationIndex];
 
-  this.destroyWidgetFromPanel();
+  destroyWidgetFromPanel();
 
   widget = new Widget();
   Main.panel.addToStatusArea("one-thing", widget, index, location);
@@ -74,17 +63,15 @@ function destroyWidgetFromPanel() {
     if (Main.panel.statusArea["one-thing"]) {
       Main.panel.statusArea["one-thing"].destroy();
     }
-  } catch (e) {
-    log("One-Thing: Error destroying widget from the panel " + e);
-  }
+  } catch (e) {}
 }
 
 function disable() {
-  this.destroyWidgetFromPanel();
+  destroyWidgetFromPanel();
 
   // Disconnect
-  this.settings.disconnect(this.indexChanged);
-  this.settings.disconnect(this.locationChanged);
+  settings.disconnect(indexChanged);
+  settings.disconnect(locationChanged);
 
   settings = null;
 
