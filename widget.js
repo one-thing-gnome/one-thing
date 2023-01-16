@@ -159,8 +159,6 @@ class _Widget extends PanelMenu.Button {
       result = "Unexpected error";
     }
 
-    log("Setting text " + result);
-
     if (this.panelText !== "") {
       this.panelText.set_text(result);
     } else {
