@@ -111,7 +111,7 @@ class _Widget extends PanelMenu.Button {
     // container for entry and icon elements
     const calcBox = new St.BoxLayout();
 
-    let path = Me.dir
+    const path = Me.dir
       .get_child("assets")
       .get_child("one-thing-gnome.svg")
       .get_path();
@@ -125,8 +125,8 @@ class _Widget extends PanelMenu.Button {
     calcBox.add(this.icon);
     calcBox.add(this.panelText);
 
-    const text = this.panelText.get_text();
-    this._showIconIfTextEmpty(text);
+    const textValue = this.panelText.get_text();
+    this._showIconIfTextEmpty(textValue);
 
     this.add_actor(calcBox);
   }
@@ -148,7 +148,7 @@ class _Widget extends PanelMenu.Button {
   }
 
   _onActivateEntry(actor) {
-    const textValue = actor.get_text().toString();
+    const textValue = actor.get_text();
 
     this._showIconIfTextEmpty(textValue);
 
