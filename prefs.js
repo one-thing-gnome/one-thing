@@ -142,8 +142,6 @@ function addLocationWidget(parentWidget, rowNum, settings) {
 }
 
 function addWidgetsAsRow(parentWidget, leftWidget, rightWidget, rowNum) {
-  parentWidget.attach(leftWidget, 0, rowNum, 1, 1);
-
   if (parentWidget instanceof Gtk.ListBox) {
     const hbox = new Gtk.Box({
       orientation: Gtk.Orientation.HORIZONTAL,
