@@ -111,13 +111,27 @@ class _Widget extends PanelMenu.Button {
     // container for entry and icon elements
     const calcBox = new St.BoxLayout();
 
+    const path = Me.dir
+      .get_child("assets")
+      .get_child("one-thing-gnome.svg")
+      .get_path();
+
+    this.icon = new St.Icon({
+      icon_name: "one-thing-gnome",
+      icon_size: 24,
+      gicon: Gio.icon_new_for_string(path),
+    });
+
+    calcBox.add(this.icon);
     calcBox.add(this.panelText);
+
+    const textValue = this.panelText.get_text();
+    this._showIconIfTextEmpty(textValue);
 
     this.add_actor(calcBox);
   }
 
   _initEvents() {
-    // events:
     this.connect(
       "button-press-event",
       function () {
@@ -127,43 +141,27 @@ class _Widget extends PanelMenu.Button {
       }.bind(this)
     );
 
-    // @Deprecated: Allow to select all text on focus
-    // Depreacating it makes the entry fields works as a normal entry field around the world
-    // this.inputText.clutter_text.connect(
-    //   "button-release-event",
-    //   this._onButtonReleaseEntry.bind(this)
-    // );
-
     this.inputText.clutter_text.connect(
       "activate",
       this._onActivateEntry.bind(this)
     );
   }
 
-  // @Deprecated: Allow to select all text on focus
-  // _onButtonReleaseEntry(actor) {
-  //   if (
-  //     actor.get_cursor_position() !== -1 &&
-  //     actor.get_selection().length === 0
-  //   ) {
-  //     actor.set_selection(0, actor.get_text().length); // doesn't work to do this on button-press-event or key_focus_in; don't know why
-  //   }
-  // }
-
   _onActivateEntry(actor) {
-    let result;
-    try {
-      const expr = actor.get_text();
-      result = expr.toString();
-    } catch (e) {
-      result = "Unexpected error";
-    }
+    const textValue = actor.get_text();
 
-    if (this.panelText !== "") {
-      this.panelText.set_text(result);
-    } else {
-    }
+    this._showIconIfTextEmpty(textValue);
+
+    this.panelText.set_text(textValue);
     this.menu.close();
+  }
+
+  _showIconIfTextEmpty(text) {
+    if (text === "") {
+      this.icon.show();
+    } else {
+      this.icon.hide();
+    }
   }
 }
 
