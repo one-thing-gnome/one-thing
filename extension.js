@@ -1,75 +1,70 @@
-const Main = imports.ui.main;
-const Gio = imports.gi.Gio;
-const ExtensionUtils = imports.misc.extensionUtils;
-const St = imports.gi.St;
-const Me = ExtensionUtils.getCurrentExtension();
-const Widget = Me.imports.widget.Widget;
+import * as Main from 'resource:///org/gnome/shell/ui/main.js';
+import {Extension} from 'resource:///org/gnome/shell/extensions/extension.js';
+
+import Widget from './widget.js';
 
 let widget;
-let layout;
 
-var settings;
 var indexChanged = null;
 var locationChanged = null;
 var LOCATION_BY_INDEX = {
-  0: "left",
-  1: "center",
-  2: "right",
+    0: 'left',
+    1: 'center',
+    2: 'right',
 };
 
-function init() {}
+export default class OneThingGnome extends Extension {
+    enable() {
+        this._settings = this.getSettings();
+        this._dir = this.dir;
 
-function enable() {
-  settings = ExtensionUtils.getSettings("org.gnome.shell.extensions.one-thing");
+        [indexChanged, locationChanged] = [
+            'index-in-status-bar',
+            'location-in-status-bar',
+        ].map(key => {
+            return this._settings.connect(`changed::${key}`, () => {
+                this._insertChildToPanel();
+            });
+        });
 
-  [indexChanged, locationChanged] = [
-    "index-in-status-bar",
-    "location-in-status-bar",
-  ].map((key) => {
-    return settings.connect("changed::" + key, () => {
-      insertChildToPanel();
-    });
-  });
+        Main.extensionManager.connect('extension-loaded', () => {
+            this._insertChildToPanel();
+        });
 
-  // Workaround to possionate the widget after all extensions are loaded
-  Main.extensionManager.connect("extension-loaded", () => {
-    insertChildToPanel();
-  });
-
-  insertChildToPanel();
-}
-
-function insertChildToPanel() {
-  const index = settings.get_int("index-in-status-bar");
-  const locationIndex = settings.get_int("location-in-status-bar");
-
-  const location = LOCATION_BY_INDEX[locationIndex];
-
-  destroyWidgetFromPanel();
-
-  widget = new Widget();
-  Main.panel.addToStatusArea("one-thing", widget, index, location);
-}
-
-function destroyWidgetFromPanel() {
-  try {
-    if (widget) {
-      widget.destroy();
-      widget = null;
+        this._insertChildToPanel();
     }
 
-    if (Main.panel.statusArea["one-thing"]) {
-      Main.panel.statusArea["one-thing"].destroy();
+    _insertChildToPanel() {
+        const index = this._settings.get_int('index-in-status-bar');
+        const locationIndex = this._settings.get_int('location-in-status-bar');
+
+        const location = LOCATION_BY_INDEX[locationIndex];
+
+        this._destroyWidgetFromPanel();
+
+        widget = new Widget(this._settings, this._dir);
+        Main.panel.addToStatusArea('one-thing', widget, index, location);
     }
-  } catch (e) {}
-}
 
-function disable() {
-  destroyWidgetFromPanel();
+    _destroyWidgetFromPanel() {
+        try {
+            if (widget) {
+                widget.destroy();
+                widget = null;
+            }
 
-  // Disconnect
-  settings.disconnect(indexChanged);
-  settings.disconnect(locationChanged);
+            if (Main.panel.statusArea['one-thing'])
+                Main.panel.statusArea['one-thing'].destroy();
+        } catch (e) { }
+    }
 
-  settings = null;
+    disable() {
+        this._destroyWidgetFromPanel();
+
+        // Disconnect
+        this._settings.disconnect(indexChanged);
+        this._settings.disconnect(locationChanged);
+
+        this._settings = null;
+    }
 }
