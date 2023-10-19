@@ -10,7 +10,7 @@ import {Extension} from 'resource:///org/gnome/shell/extensions/extension.js';
 
 import {_addContextMenu} from './entryMenu.js';
 
-const BindFlags = Gio.SettingsBindFlags.DEFAULT
+const BindFlags = Gio.SettingsBindFlags.DEFAULT;
 
 var Widget = new GObject.registerClass(
     class Widget extends PanelMenu.Button {
@@ -142,7 +142,7 @@ var Widget = new GObject.registerClass(
         }
 
         _showIconIfTextEmpty(text) {
-            if (text === "")
+            if (text === '')
                 this.icon.show();
             else
                 this.icon.hide();

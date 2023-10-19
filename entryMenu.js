@@ -13,6 +13,7 @@ import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 import * as Params from 'resource:///org/gnome/shell/misc/params.js';
 import * as PopupMenu from 'resource:///org/gnome/shell/ui/popupMenu.js';
 import {BoxPointer} from 'resource:///org/gnome/shell/ui/boxpointer.js';
+import {gettext as _} from 'resource:///org/gnome/shell/extensions/extension.js';
 
 export class EntryMenu extends PopupMenu.PopupMenu {
     constructor(entry, settings) {
@@ -82,8 +83,8 @@ export class EntryMenu extends PopupMenu.PopupMenu {
 
 /**
  *
- * @param entry
- * @param stageX
+ * @param {object} entry St.Entry
+ * @param {int} stageX co-ordinates
  */
 function _setMenuAlignment(entry, stageX) {
     let [success, entryX] = entry.transform_stage_point(stageX, 0);
@@ -93,9 +94,9 @@ function _setMenuAlignment(entry, stageX) {
 
 /**
  *
- * @param actor
- * @param event
- * @param entry
+ * @param {object} actor actor
+ * @param {object} event event
+ * @param {object} entry St.Entry
  */
 function _onButtonPressEvent(actor, event, entry) {
     if (entry.menu.isOpen) {
@@ -112,8 +113,8 @@ function _onButtonPressEvent(actor, event, entry) {
 
 /**
  *
- * @param actor
- * @param entry
+ * @param {object} actor actor
+ * @param {object} entry St.Entry
  */
 function _onPopup(actor, entry) {
     let cursorPosition = entry.clutter_text.get_cursor_position();
@@ -126,8 +127,8 @@ function _onPopup(actor, entry) {
 
 /**
  *
- * @param entry
- * @param params
+ * @param {object} entry entry
+ * @param {object} params params
  */
 export function _addContextMenu(entry, params) {
     if (entry.menu)
