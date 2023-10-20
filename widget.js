@@ -65,6 +65,7 @@ const Widget = new GObject.registerClass(
                 style_class: 'one-thing-input',
                 secondary_icon: new St.Icon({
                     icon_name: 'preferences-system-symbolic',
+                    icon_size: 16,
                 }),
 
             });
