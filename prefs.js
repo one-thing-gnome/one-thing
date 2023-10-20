@@ -9,14 +9,22 @@ export default class OneThingGnomeExtensionPreferences extends ExtensionPreferen
     fillPreferencesWindow(window) {
         window._settings = this.getSettings();
         const page = new Adw.PreferencesPage();
-        const group = new Adw.PreferencesGroup({
-            title: 'One Thing Gnome',
+
+        // Settings
+        const SettingsGroup = new Adw.PreferencesGroup({
+            title: 'Settings',
+            description: 'You can always access it in Extensions',
         });
 
         const switchRow = new Adw.SwitchRow({
-            title: 'Show "Settings" in popup window? *You can always access it in Extension Manager',
+            title: 'Show "Settings" in popup window?',
         });
-        group.add(switchRow);
+        SettingsGroup.add(switchRow);
+
+        // Index
+        const IndexGroup = new Adw.PreferencesGroup({
+            title: 'Index',
+        });
 
         const indexRow = new Adw.SpinRow({
             title: 'Index in status bar',
@@ -28,7 +36,12 @@ export default class OneThingGnomeExtensionPreferences extends ExtensionPreferen
                 'step-increment': 1,
             }),
         });
-        group.add(indexRow);
+        IndexGroup.add(indexRow);
+
+        // Location
+        const LocationGroup = new Adw.PreferencesGroup({
+            title: 'Location',
+        });
 
         const locationRow = new Adw.SpinRow({
             title: 'Location in status bar',
@@ -40,13 +53,15 @@ export default class OneThingGnomeExtensionPreferences extends ExtensionPreferen
                 'step-increment': 1,
             }),
         });
-        group.add(locationRow);
+        LocationGroup.add(locationRow);
 
         window._settings.bind('show-settings-button-on-popup', switchRow, 'active', BindFlags);
         window._settings.bind('index-in-status-bar', indexRow, 'value', BindFlags);
         window._settings.bind('location-in-status-bar', locationRow, 'value', BindFlags);
 
-        page.add(group);
+        page.add(SettingsGroup);
+        page.add(IndexGroup);
+        page.add(LocationGroup);
         window.add(page);
     }
 }

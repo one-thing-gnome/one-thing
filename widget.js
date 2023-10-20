@@ -1,7 +1,7 @@
-import St from 'gi://St';
-import Clutter from 'gi://Clutter';
-import Gio from 'gi://Gio';
 import GObject from 'gi://GObject';
+import St from 'gi://St';
+import Gio from 'gi://Gio';
+import Clutter from 'gi://Clutter';
 
 import * as PanelMenu from 'resource:///org/gnome/shell/ui/panelMenu.js';
 import * as PopupMenu from 'resource:///org/gnome/shell/ui/popupMenu.js';
@@ -10,9 +10,7 @@ import {Extension} from 'resource:///org/gnome/shell/extensions/extension.js';
 
 import {_addContextMenu} from './entryMenu.js';
 
-const BindFlags = Gio.SettingsBindFlags.DEFAULT;
-
-var Widget = new GObject.registerClass(
+const Widget = new GObject.registerClass(
     class Widget extends PanelMenu.Button {
         _init(settings, dir) {
             super._init(0, 'AppWidget', false);
@@ -49,7 +47,7 @@ var Widget = new GObject.registerClass(
                 'thing-value',
                 this.panelText,
                 'text',
-                BindFlags
+                Gio.SettingsBindFlags.DEFAULT
             );
         }
 
@@ -60,13 +58,22 @@ var Widget = new GObject.registerClass(
                 track_hover: true,
                 can_focus: true,
                 style_class: 'one-thing-input',
+                secondary_icon: new St.Icon({
+                    icon_name: 'org.gnome.Settings-symbolic',
+                    icon_size: 24,
+                }),
+
+            });
+
+            this.inputText.connect('secondary-icon-clicked', () => {
+                this._e.openPreferences();
             });
 
             this._settings.bind(
-                'thing-value',
-                this.inputText,
-                'text',
-                BindFlags
+                'show-settings-button-on-popup',
+                this.inputText.secondary_icon,
+                'visible',
+                Gio.SettingsBindFlags.DEFAULT
             );
 
             _addContextMenu(this.inputText);
@@ -74,27 +81,13 @@ var Widget = new GObject.registerClass(
             const menuItem = new PopupMenu.PopupBaseMenuItem({
                 reactive: false,
             });
+
             menuItem.add_actor(this.inputText);
             this.menu.addMenuItem(menuItem);
-
-            this._addSubmenuSettings();
-        }
-
-        _addSubmenuSettings() {
-            let separatorItem = new PopupMenu.PopupSeparatorMenuItem();
-            this.menu.addMenuItem(separatorItem);
-
-            let settingsItem = new PopupMenu.PopupMenuItem('Settings');
-            settingsItem.connect('activate', () => {
-                this._e.openPreferences();
-            });
-            this.menu.addMenuItem(settingsItem);
-
-            this._settings.bind('show-settings-button-on-popup', settingsItem, 'visible', BindFlags);
         }
 
         _initContainer() {
-            // container for entry and icon elements
+            // container for icon and entry elements
             const calcBox = new St.BoxLayout();
 
             const path = this._dir
