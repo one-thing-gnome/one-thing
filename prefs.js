@@ -10,24 +10,22 @@ export default class OneThingGnomeExtensionPreferences extends ExtensionPreferen
         window._settings = this.getSettings();
         const page = new Adw.PreferencesPage();
 
-        // Settings
         const SettingsGroup = new Adw.PreferencesGroup({
-            title: 'Settings',
-            description: 'You can always access it in Extensions',
+            title: 'Preferences',
         });
 
         const switchRow = new Adw.SwitchRow({
-            title: 'Show "Settings" in popup window?',
+            title: 'Show Preferences Button Next to Entry',
+            subtitle: 'You can always access it in Extensions',
         });
         SettingsGroup.add(switchRow);
 
-        // Index
-        const IndexGroup = new Adw.PreferencesGroup({
-            title: 'Index',
+        const LocationGroup = new Adw.PreferencesGroup({
+            title: 'Location',
         });
 
         const indexRow = new Adw.SpinRow({
-            title: 'Index in status bar',
+            title: 'Index in Panel',
             adjustment: new Gtk.Adjustment({
                 lower: -1,
                 upper: 5,
@@ -36,15 +34,10 @@ export default class OneThingGnomeExtensionPreferences extends ExtensionPreferen
                 'step-increment': 1,
             }),
         });
-        IndexGroup.add(indexRow);
-
-        // Location
-        const LocationGroup = new Adw.PreferencesGroup({
-            title: 'Location',
-        });
+        LocationGroup.add(indexRow);
 
         const locationRow = new Adw.SpinRow({
-            title: 'Location in status bar',
+            title: 'Location in Panel',
             adjustment: new Gtk.Adjustment({
                 lower: 0,
                 upper: 2,
@@ -60,7 +53,6 @@ export default class OneThingGnomeExtensionPreferences extends ExtensionPreferen
         window._settings.bind('location-in-status-bar', locationRow, 'value', BindFlags);
 
         page.add(SettingsGroup);
-        page.add(IndexGroup);
         page.add(LocationGroup);
         window.add(page);
     }

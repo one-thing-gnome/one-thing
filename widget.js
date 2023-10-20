@@ -51,6 +51,11 @@ const Widget = new GObject.registerClass(
             );
         }
 
+        _openPreferences() {
+            this._e.openPreferences();
+            this.menu.close();
+        }
+
         _initPopup() {
             this.inputText = new St.Entry({
                 hint_text: 'Write One Thing',
@@ -59,14 +64,13 @@ const Widget = new GObject.registerClass(
                 can_focus: true,
                 style_class: 'one-thing-input',
                 secondary_icon: new St.Icon({
-                    icon_name: 'org.gnome.Settings-symbolic',
-                    icon_size: 24,
+                    icon_name: 'preferences-system-symbolic',
                 }),
 
             });
 
             this.inputText.connect('secondary-icon-clicked', () => {
-                this._e.openPreferences();
+                this._openPreferences();
             });
 
             this._settings.bind(
