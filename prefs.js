@@ -15,7 +15,7 @@ export default class OneThingGnomeExtensionPreferences extends ExtensionPreferen
         });
 
         const entryRow = new Adw.EntryRow({
-            title: 'Enter your text, Have support for emojis also',
+            title: 'Enter your text, have support for emojis also, Press Ctrl+; for emojis',
             'enable-emoji-completion': true,
             'activates-default': true,
         });
