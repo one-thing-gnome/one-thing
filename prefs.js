@@ -10,12 +10,10 @@ export default class OneThingGnomeExtensionPreferences extends ExtensionPreferen
         window._settings = this.getSettings();
         const page = new Adw.PreferencesPage();
 
-        const customTextGroup = new Adw.PreferencesGroup({
-            title: 'Custom Text',
-        });
+        const customTextGroup = new Adw.PreferencesGroup();
 
         const entryRow = new Adw.EntryRow({
-            title: 'Enter your text, have support for emojis also, Press Ctrl+; for emojis',
+            title: 'Enter your one thing here',
             'enable-emoji-completion': true,
             'activates-default': true,
         });

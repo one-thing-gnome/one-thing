@@ -35,7 +35,7 @@ export class EntryMenu extends PopupMenu.PopupMenu {
         this.addMenuItem(item);
         this._pasteItem = item;
 
-        item = new PopupMenu.PopupMenuItem(_('Open Prefs'));
+        item = new PopupMenu.PopupMenuItem(_('Preferences'));
         item.connect('activate', () => {
             this._extension.openPreferences();
             entry.menu.close();
