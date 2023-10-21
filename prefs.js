@@ -10,6 +10,21 @@ export default class OneThingGnomeExtensionPreferences extends ExtensionPreferen
         window._settings = this.getSettings();
         const page = new Adw.PreferencesPage();
 
+        const customTextGroup = new Adw.PreferencesGroup({
+            title: 'Custom Text',
+        });
+
+        const entryRow = new Adw.EntryRow({
+            title: 'Enter your text, Have support for emojis also',
+            'enable-emoji-completion': true,
+            'activates-default': true,
+        });
+        entryRow.set_text(window._settings.get_string('thing-value'));
+        entryRow.connect('entry-activated', entry => {
+            window._settings.set_string('thing-value', entry.get_text());
+        });
+        customTextGroup.add(entryRow);
+
         const SettingsGroup = new Adw.PreferencesGroup({
             title: 'Preferences',
         });
@@ -40,17 +55,17 @@ export default class OneThingGnomeExtensionPreferences extends ExtensionPreferen
             orientation: Gtk.Orientation.HORIZONTAL,
             valign: Gtk.Align.CENTER,
         });
-        this._button_box.add_css_class("linked");
+        this._button_box.add_css_class('linked');
 
         this._leftButton = new Gtk.ToggleButton({
-            label: "Left",
+            label: 'Left',
         });
         this._centerButton = new Gtk.ToggleButton({
-            label: "Center",
+            label: 'Center',
             group: this._leftButton,
         });
         this._rightButton = new Gtk.ToggleButton({
-            label: "Right",
+            label: 'Right',
             group: this._leftButton,
         });
         this._button_box.append(this._leftButton);
@@ -60,39 +75,38 @@ export default class OneThingGnomeExtensionPreferences extends ExtensionPreferen
         const locationRow = new Adw.ActionRow({
             title: 'Location in Panel',
         });
-        locationRow.add_suffix(this._button_box)
+        locationRow.add_suffix(this._button_box);
         LocationGroup.add(locationRow);
 
         window._settings.bind('show-settings-button-on-popup', switchRow, 'active', BindFlags);
         window._settings.bind('index-in-status-bar', indexRow, 'value', BindFlags);
 
         switch (window._settings.get_int('location-in-status-bar')) {
-            case 0:
-                this._leftButton.set_active(true);
-                break;
-            case 1:
-                this._centerButton.set_active(true);
-                break;
-            case 2:
-                this._rightButton.set_active(true);
-                break;
-        };
+        case 0:
+            this._leftButton.set_active(true);
+            break;
+        case 1:
+            this._centerButton.set_active(true);
+            break;
+        case 2:
+            this._rightButton.set_active(true);
+            break;
+        }
 
         const locationChanged = () => {
-            if (this._leftButton.get_active() === true) {
-                window._settings.set_int('location-in-status-bar', 0)
-            } else if (this._centerButton.get_active() === true) {
-                window._settings.set_int('location-in-status-bar', 1)
-            } else if (this._rightButton.get_active() === true) {
-                window._settings.set_int('location-in-status-bar', 2)
-            }
+            if (this._leftButton.get_active() === true)
+                window._settings.set_int('location-in-status-bar', 0);
+            else if (this._centerButton.get_active() === true)
+                window._settings.set_int('location-in-status-bar', 1);
+            else if (this._rightButton.get_active() === true)
+                window._settings.set_int('location-in-status-bar', 2);
         };
 
-        this._leftButton.connect('notify::active', locationChanged)
-        this._centerButton.connect('notify::active', locationChanged)
-        this._rightButton.connect('notify::active', locationChanged)
+        this._leftButton.connect('notify::active', locationChanged);
+        this._centerButton.connect('notify::active', locationChanged);
+        this._rightButton.connect('notify::active', locationChanged);
 
-
+        page.add(customTextGroup);
         page.add(SettingsGroup);
         page.add(LocationGroup);
         window.add(page);

@@ -13,15 +13,15 @@ import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 import * as Params from 'resource:///org/gnome/shell/misc/params.js';
 import * as PopupMenu from 'resource:///org/gnome/shell/ui/popupMenu.js';
 import {BoxPointer} from 'resource:///org/gnome/shell/ui/boxpointer.js';
-import {gettext as _} from 'resource:///org/gnome/shell/extensions/extension.js';
+import {Extension, gettext as _} from 'resource:///org/gnome/shell/extensions/extension.js';
 
 export class EntryMenu extends PopupMenu.PopupMenu {
-    constructor(entry, settings) {
+    constructor(entry) {
         super(entry, 0, St.Side.TOP);
 
         this._entry = entry;
         this._clipboard = St.Clipboard.get_default();
-        this._settings = settings;
+        this._extension = Extension.lookupByURL(import.meta.url);
 
         // Populate menu
         let item;
@@ -34,6 +34,13 @@ export class EntryMenu extends PopupMenu.PopupMenu {
         item.connect('activate', this._onPasteActivated.bind(this));
         this.addMenuItem(item);
         this._pasteItem = item;
+
+        item = new PopupMenu.PopupMenuItem(_('Open Prefs'));
+        item.connect('activate', () => {
+            this._extension.openPreferences();
+            entry.menu.close();
+        });
+        this.addMenuItem(item);
 
         Main.uiGroup.add_actor(this.actor);
         this.actor.hide();

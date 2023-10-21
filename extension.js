@@ -5,6 +5,7 @@ import Widget from './widget.js';
 
 let widget;
 
+var thingValueChanged = null;
 var indexChanged = null;
 var locationChanged = null;
 var LOCATION_BY_INDEX = {
@@ -18,10 +19,16 @@ export default class OneThingGnome extends Extension {
         this._settings = this.getSettings();
         this._dir = this.dir;
 
-        [indexChanged, locationChanged] = [
+        [thingValueChanged, indexChanged, locationChanged] = [
+            'thing-value',
             'index-in-status-bar',
             'location-in-status-bar',
         ].map(key => {
+            if (key === 'thing-value') {
+                return this._settings.connect(`changed::${key}`, () => {
+                    widget._showIconIfTextEmpty(this._settings.get_string('thing-value'));
+                });
+            }
             return this._settings.connect(`changed::${key}`, () => {
                 this._insertChildToPanel();
             });
@@ -62,6 +69,7 @@ export default class OneThingGnome extends Extension {
         this._destroyWidgetFromPanel();
 
         // Disconnect
+        this._settings.disconnect(thingValueChanged);
         this._settings.disconnect(indexChanged);
         this._settings.disconnect(locationChanged);
 

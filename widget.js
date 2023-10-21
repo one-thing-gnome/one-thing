@@ -92,8 +92,7 @@ const Widget = new GObject.registerClass(
         }
 
         _initContainer() {
-            // container for icon and entry elements
-            const calcBox = new St.BoxLayout();
+            const oneThingContainer = new St.BoxLayout();
 
             const path = this._dir
                 .get_child('assets')
@@ -106,13 +105,13 @@ const Widget = new GObject.registerClass(
                 gicon: Gio.icon_new_for_string(path),
             });
 
-            calcBox.add(this.icon);
-            calcBox.add(this.panelText);
+            oneThingContainer.add(this.icon);
+            oneThingContainer.add(this.panelText);
 
             const textValue = this.panelText.get_text();
             this._showIconIfTextEmpty(textValue);
 
-            this.add_actor(calcBox);
+            this.add_actor(oneThingContainer);
         }
 
         _initEvents() {
@@ -121,9 +120,10 @@ const Widget = new GObject.registerClass(
                 () => {
                     if (this.menu.isOpen)
                         this.inputText.grab_key_focus();
+
+                    this.inputText.set_text(this._settings.get_string('thing-value'));
                 }
             );
-
             this.inputText.clutter_text.connect(
                 'activate',
                 this._onActivateEntry.bind(this)
@@ -132,10 +132,9 @@ const Widget = new GObject.registerClass(
 
         _onActivateEntry(actor) {
             const textValue = actor.get_text();
-
             this._showIconIfTextEmpty(textValue);
-
             this.panelText.set_text(textValue);
+            this._settings.set_string('thing-value', textValue);
             this.menu.close();
         }
 
