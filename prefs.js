@@ -1,167 +1,112 @@
-const Gio = imports.gi.Gio;
-const Gtk = imports.gi.Gtk;
-const GObject = imports.gi.GObject;
-const ExtensionUtils = imports.misc.extensionUtils;
+import Adw from 'gi://Adw';
+import Gio from 'gi://Gio';
+import Gtk from 'gi://Gtk';
+import {ExtensionPreferences} from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
 
-function init() {}
+const BindFlags = Gio.SettingsBindFlags.DEFAULT;
 
-function buildPrefsWidget() {
-  const settings = ExtensionUtils.getSettings(
-    "org.gnome.shell.extensions.one-thing"
-  );
+export default class OneThingGnomeExtensionPreferences extends ExtensionPreferences {
+    fillPreferencesWindow(window) {
+        window._settings = this.getSettings();
+        const page = new Adw.PreferencesPage();
 
-  let widget = new Gtk.ListBox({
-    selection_mode: Gtk.SelectionMode.NONE,
-    halign: Gtk.Align.CENTER,
-    valign: Gtk.Align.START,
-    hexpand: true,
-    margin_start: 60,
-    margin_end: 60,
-    margin_top: 60,
-    margin_bottom: 60,
-  });
+        const customTextGroup = new Adw.PreferencesGroup();
 
-  if (typeof widget.append === "function") {
-    // presumably, Gtx 4.0+
-    widget.show_separators = true;
-  } else {
-    // this is happening in ubuntu 21.04
-    // Gtx.Listbox.append, Gtx.Listbox.show_separators, and also Gtk.Box.append
-    // are missing--they're not available in Gtk pre-4.0. Can't figure out how
-    // to add items to ListBox without the append functions (tried using
-    // Box.pack_end ListBox.insert unsucessfully), so substituting simple
-    // Gtk.Grid instead. (we don't simply just use Grid exclusively because
-    // ListBox is visually more appropriate)
-    widget = new Gtk.Grid({
-      margin_start: 18,
-      margin_end: 18,
-      margin_top: 30,
-      margin_bottom: 18,
-      column_spacing: 0,
-      row_spacing: 20,
-      visible: true,
-    });
-  }
+        const entryRow = new Adw.EntryRow({
+            title: 'Enter your one thing here',
+            'enable-emoji-completion': true,
+            'activates-default': true,
+        });
+        entryRow.set_text(window._settings.get_string('thing-value'));
+        entryRow.connect('entry-activated', entry => {
+            window._settings.set_string('thing-value', entry.get_text());
+        });
+        customTextGroup.add(entryRow);
 
-  addLocationWidget(widget, 1, settings);
-  addIndexWidget(widget, 2, settings);
-  addShowSettingSwitchWidget(widget, 3, settings);
+        const SettingsGroup = new Adw.PreferencesGroup({
+            title: 'Preferences',
+        });
 
-  return widget;
-}
+        const switchRow = new Adw.SwitchRow({
+            title: 'Show Preferences Button Next to Entry',
+            subtitle: 'You can always access it in Extensions',
+        });
+        SettingsGroup.add(switchRow);
 
-function addShowSettingSwitchWidget(parentWidget, rowNum, settings) {
-  const leftWidget = new Gtk.Label({
-    label:
-      'Show "Settings" in popup window? *You can always access it in Extension Manager',
-    halign: Gtk.Align.START,
-    margin_end: 30,
-    hexpand: true,
-    visible: true,
-  });
+        const LocationGroup = new Adw.PreferencesGroup({
+            title: 'Location',
+        });
 
-  const rightWidget = new Gtk.Switch({
-    active: settings.get_boolean("show-settings-button-on-popup"),
-    halign: Gtk.Align.END,
-    visible: true,
-  });
+        const indexRow = new Adw.SpinRow({
+            title: 'Index in Panel',
+            adjustment: new Gtk.Adjustment({
+                lower: -1,
+                upper: 5,
+                value: 0,
+                'page-increment': 1,
+                'step-increment': 1,
+            }),
+        });
+        LocationGroup.add(indexRow);
 
-  settings.bind(
-    "show-settings-button-on-popup",
-    rightWidget,
-    "active",
-    Gio.SettingsBindFlags.DEFAULT
-  );
+        this._button_box = new Gtk.Box({
+            orientation: Gtk.Orientation.HORIZONTAL,
+            valign: Gtk.Align.CENTER,
+        });
+        this._button_box.add_css_class('linked');
 
-  addWidgetsAsRow(parentWidget, leftWidget, rightWidget, rowNum);
-}
+        this._leftButton = new Gtk.ToggleButton({
+            label: 'Left',
+        });
+        this._centerButton = new Gtk.ToggleButton({
+            label: 'Center',
+            group: this._leftButton,
+        });
+        this._rightButton = new Gtk.ToggleButton({
+            label: 'Right',
+            group: this._leftButton,
+        });
+        this._button_box.append(this._leftButton);
+        this._button_box.append(this._centerButton);
+        this._button_box.append(this._rightButton);
 
-function addIndexWidget(parentWidget, rowNum, settings) {
-  const leftWidget = new Gtk.Label({
-    label: "Index in status bar:",
-    halign: Gtk.Align.START,
-    margin_end: 30,
-    hexpand: true,
-    visible: true,
-  });
+        const locationRow = new Adw.ActionRow({
+            title: 'Location in Panel',
+        });
+        locationRow.add_suffix(this._button_box);
+        LocationGroup.add(locationRow);
 
-  let rightWidget = new Gtk.SpinButton({
-    adjustment: new Gtk.Adjustment({ lower: 0, upper: 12, step_increment: 1 }),
-    visible: true,
-    halign: Gtk.Align.END,
-  });
+        window._settings.bind('show-settings-button-on-popup', switchRow, 'active', BindFlags);
+        window._settings.bind('index-in-status-bar', indexRow, 'value', BindFlags);
 
-  settings.bind(
-    "index-in-status-bar",
-    rightWidget,
-    "value",
-    Gio.SettingsBindFlags.DEFAULT
-  );
+        switch (window._settings.get_int('location-in-status-bar')) {
+        case 0:
+            this._leftButton.set_active(true);
+            break;
+        case 1:
+            this._centerButton.set_active(true);
+            break;
+        case 2:
+            this._rightButton.set_active(true);
+            break;
+        }
 
-  addWidgetsAsRow(parentWidget, leftWidget, rightWidget, rowNum);
-}
+        const locationChanged = () => {
+            if (this._leftButton.get_active() === true)
+                window._settings.set_int('location-in-status-bar', 0);
+            else if (this._centerButton.get_active() === true)
+                window._settings.set_int('location-in-status-bar', 1);
+            else if (this._rightButton.get_active() === true)
+                window._settings.set_int('location-in-status-bar', 2);
+        };
 
-function addLocationWidget(parentWidget, rowNum, settings) {
-  const leftWidget = new Gtk.Label({
-    label: "Location in status bar:",
-    halign: Gtk.Align.START,
-    margin_end: 30,
-    hexpand: true,
-    visible: true,
-  });
+        this._leftButton.connect('notify::active', locationChanged);
+        this._centerButton.connect('notify::active', locationChanged);
+        this._rightButton.connect('notify::active', locationChanged);
 
-  let options = [{ name: "Left" }, { name: "Center" }, { name: "Right" }];
-
-  let listStore = new Gtk.ListStore();
-
-  listStore.set_column_types([GObject.TYPE_STRING]);
-  for (let i = 0; i < options.length; i++) {
-    let option = options[i];
-    const iter = listStore.append();
-    listStore.set(iter, [0], [option.name]);
-  }
-
-  let rightWidget = new Gtk.ComboBox({
-    model: listStore,
-    visible: true,
-    halign: Gtk.Align.END,
-  });
-
-  let rendererText = new Gtk.CellRendererText();
-  rightWidget.pack_start(rendererText, false);
-  rightWidget.add_attribute(rendererText, "text", 0);
-
-  settings.bind(
-    "location-in-status-bar",
-    rightWidget,
-    "active",
-    Gio.SettingsBindFlags.DEFAULT
-  );
-
-  addWidgetsAsRow(parentWidget, leftWidget, rightWidget, rowNum);
-}
-
-function addWidgetsAsRow(parentWidget, leftWidget, rightWidget, rowNum) {
-  if (parentWidget instanceof Gtk.ListBox) {
-    const hbox = new Gtk.Box({
-      orientation: Gtk.Orientation.HORIZONTAL,
-      spacing: 10,
-      margin_start: 10,
-      margin_end: 10,
-      margin_top: 16,
-      margin_bottom: 16,
-    });
-
-    const row = new Gtk.ListBoxRow({
-      child: hbox,
-    });
-
-    // In case of error appending items https://github.com/raujonas/executor/blob/641ef4f64e35388995873c0e2c6cf8d7148879d3/prefs.js#L51
-    hbox.append(leftWidget);
-    hbox.append(rightWidget);
-    parentWidget.append(row);
-  } else {
-    parentWidget.attach(leftWidget, 0, rowNum, 1, 1);
-    parentWidget.attach(rightWidget, 1, rowNum, 1, 1);
-  }
+        page.add(customTextGroup);
+        page.add(SettingsGroup);
+        page.add(LocationGroup);
+        window.add(page);
+    }
 }
