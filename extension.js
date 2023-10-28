@@ -79,8 +79,6 @@ export default class OneThingGnome extends Extension {
         this._settings.disconnect(indexChanged);
         this._settings.disconnect(locationChanged);
 
-
-
         this._settings = null;
     }
 }
