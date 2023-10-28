@@ -34,9 +34,12 @@ export default class OneThingGnome extends Extension {
             });
         });
 
-        Main.extensionManager.connect('extension-loaded', () => {
-            this._insertChildToPanel();
-        });
+        let isRightBoxChosen = this._settings.get_int('location-in-status-bar') === 2;
+        if (isRightBoxChosen) {
+            this._actorAddedSignal = Main.panel._rightBox.connect('actor-added', () => {
+                this._insertChildToPanel();
+            });
+        }
 
         this._insertChildToPanel();
     }
@@ -55,6 +58,9 @@ export default class OneThingGnome extends Extension {
 
     _destroyWidgetFromPanel() {
         try {
+            if (this._actorAddedSignal)
+                Main.panel._rightBox.disconnect(this._actorAddedSignal);
+
             if (widget) {
                 widget.destroy();
                 widget = null;
@@ -72,6 +78,8 @@ export default class OneThingGnome extends Extension {
         this._settings.disconnect(thingValueChanged);
         this._settings.disconnect(indexChanged);
         this._settings.disconnect(locationChanged);
+
+
 
         this._settings = null;
     }
