@@ -34,14 +34,16 @@ export default class OneThingGnome extends Extension {
             });
         });
 
+        this._insertChildToPanel();
+    }
+
+    _checkIfRightBoxIsSelected() {
         let isRightBoxChosen = this._settings.get_int('location-in-status-bar') === 2;
         if (isRightBoxChosen) {
             this._actorAddedSignal = Main.panel._rightBox.connect('actor-added', () => {
                 this._insertChildToPanel();
             });
         }
-
-        this._insertChildToPanel();
     }
 
     _insertChildToPanel() {
@@ -54,6 +56,8 @@ export default class OneThingGnome extends Extension {
 
         widget = new Widget(this._settings, this._dir);
         Main.panel.addToStatusArea('one-thing', widget, index, location);
+
+        this._checkIfRightBoxIsSelected();
     }
 
     _destroyWidgetFromPanel() {
