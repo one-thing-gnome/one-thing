@@ -35,6 +35,7 @@ export default class OneThingGnome extends Extension {
                     if (widget.menu.isOpen) {
                         setTimeout(() => {
                             widget.inputText.grab_key_focus();
+                            widget.inputText.clutter_text.set_selection(-1, 0);
                         }, 100);
                     }
                     originalMethod.call(widget, ...args);

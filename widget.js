@@ -123,8 +123,8 @@ const Widget = new GObject.registerClass(
                     if (this.menu.isOpen)
                         this.inputText.grab_key_focus();
 
-
                     this.inputText.set_text(this._settings.get_string('thing-value'));
+                    this.inputText.clutter_text.set_selection(-1, 0);
                 }
             );
 
