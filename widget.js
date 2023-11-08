@@ -3,6 +3,8 @@ import St from 'gi://St';
 import Gio from 'gi://Gio';
 import Clutter from 'gi://Clutter';
 
+
+
 import * as PanelMenu from 'resource:///org/gnome/shell/ui/panelMenu.js';
 import * as PopupMenu from 'resource:///org/gnome/shell/ui/popupMenu.js';
 
@@ -121,9 +123,11 @@ const Widget = new GObject.registerClass(
                     if (this.menu.isOpen)
                         this.inputText.grab_key_focus();
 
+
                     this.inputText.set_text(this._settings.get_string('thing-value'));
                 }
             );
+
             this.inputText.clutter_text.connect(
                 'activate',
                 this._onActivateEntry.bind(this)

@@ -1,5 +1,9 @@
+import Meta from 'gi://Meta';
+import Shell from 'gi://Shell';
+
 import * as Main from 'resource:///org/gnome/shell/ui/main.js';
-import {Extension} from 'resource:///org/gnome/shell/extensions/extension.js';
+import {Extension, InjectionManager} from 'resource:///org/gnome/shell/extensions/extension.js';
+import * as PanelMenu from 'resource:///org/gnome/shell/ui/panelMenu.js';
 
 import Widget from './widget.js';
 
@@ -15,9 +19,28 @@ var LOCATION_BY_INDEX = {
 };
 
 export default class OneThingGnome extends Extension {
+    constructor(metadata) {
+        super(metadata);
+        this._injectionManager = new InjectionManager();
+    }
+
     enable() {
         this._settings = this.getSettings();
         this._dir = this.dir;
+
+        // grab key focus after 100ms delay
+        this._injectionManager.overrideMethod(PanelMenu.Button.prototype, '_onOpenStateChanged',
+            originalMethod => {
+                return args => {
+                    if (widget.menu.isOpen) {
+                        setTimeout(() => {
+                            widget.inputText.grab_key_focus();
+                        }, 100);
+                    }
+                    originalMethod.call(widget, ...args);
+                };
+            });
+        //
 
         [thingValueChanged, indexChanged, locationChanged] = [
             'thing-value',
@@ -35,6 +58,18 @@ export default class OneThingGnome extends Extension {
         });
 
         this._insertChildToPanel();
+
+        this._addKeybinding();
+    }
+
+    _addKeybinding() {
+        Main.wm.addKeybinding(
+            'activate-onething',
+            this._settings,
+            Meta.KeyBindingFlags.IGNORE_AUTOREPEAT,
+            Shell.ActionMode.NORMAL | Shell.ActionMode.OVERVIEW,
+            () => widget.menu.open()
+        );
     }
 
     _checkIfRightBoxIsSelected() {
@@ -76,6 +111,8 @@ export default class OneThingGnome extends Extension {
     }
 
     disable() {
+        this._injectionManager.clear();
+
         this._destroyWidgetFromPanel();
 
         // Disconnect
@@ -84,5 +121,7 @@ export default class OneThingGnome extends Extension {
         this._settings.disconnect(locationChanged);
 
         this._settings = null;
+
+        Main.wm.removeKeybinding('activate-onething');
     }
 }
