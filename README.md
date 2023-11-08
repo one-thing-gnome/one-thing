@@ -10,7 +10,9 @@ You can install this extension from the gnome extension store: https://extension
 
 ### Set the one-thing via command line
 
-`dconf write /org/gnome/shell/extensions/one-thing/thing-value "'My todo'"``
+```
+dconf write /org/gnome/shell/extensions/one-thing/thing-value "'My todo'"
+```
 
 ### Screenshots
 
