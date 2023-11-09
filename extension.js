@@ -10,6 +10,7 @@ import Widget from './widget.js';
 let widget;
 
 var thingValueChanged = null;
+var hotKey = null;
 var indexChanged = null;
 var locationChanged = null;
 var LOCATION_BY_INDEX = {
@@ -42,14 +43,19 @@ export default class OneThingGnome extends Extension {
             });
         //
 
-        [thingValueChanged, indexChanged, locationChanged] = [
+        [thingValueChanged, hotKey, indexChanged, locationChanged] = [
             'thing-value',
+            'hot-key',
             'index-in-status-bar',
             'location-in-status-bar',
         ].map(key => {
             if (key === 'thing-value') {
                 return this._settings.connect(`changed::${key}`, () => {
                     widget._showIconIfTextEmpty(this._settings.get_string('thing-value'));
+                });
+            } else if (key === 'hot-key') {
+                return this._settings.connect(`changed::${key}`, () => {
+                    this._addKeybinding();
                 });
             }
             return this._settings.connect(`changed::${key}`, () => {
@@ -63,6 +69,12 @@ export default class OneThingGnome extends Extension {
     }
 
     _addKeybinding() {
+        const shallTurnOnHotKey = this._settings.get_boolean('hot-key');
+        if (!shallTurnOnHotKey) {
+            Main.wm.removeKeybinding('activate-onething');
+            return;
+        }
+
         Main.wm.addKeybinding(
             'activate-onething',
             this._settings,
@@ -117,6 +129,7 @@ export default class OneThingGnome extends Extension {
 
         // Disconnect
         this._settings.disconnect(thingValueChanged);
+        this._settings.disconnect(hotKey);
         this._settings.disconnect(indexChanged);
         this._settings.disconnect(locationChanged);
 

@@ -33,6 +33,15 @@ export default class OneThingGnomeExtensionPreferences extends ExtensionPreferen
         });
         SettingsGroup.add(switchRow);
 
+        const HotKeyGroup = new Adw.PreferencesGroup({
+            title: 'Hot Key',
+        });
+
+        const hotKeyRow = new Adw.SwitchRow({
+            title: 'Allow HotKey (Super+W by default)',
+        });
+        HotKeyGroup.add(hotKeyRow);
+
         const LocationGroup = new Adw.PreferencesGroup({
             title: 'Location',
         });
@@ -77,6 +86,7 @@ export default class OneThingGnomeExtensionPreferences extends ExtensionPreferen
         LocationGroup.add(locationRow);
 
         window._settings.bind('show-settings-button-on-popup', switchRow, 'active', BindFlags);
+        window._settings.bind('hot-key', hotKeyRow, 'active', BindFlags);
         window._settings.bind('index-in-status-bar', indexRow, 'value', BindFlags);
 
         switch (window._settings.get_int('location-in-status-bar')) {
@@ -106,6 +116,7 @@ export default class OneThingGnomeExtensionPreferences extends ExtensionPreferen
 
         page.add(customTextGroup);
         page.add(SettingsGroup);
+        page.add(HotKeyGroup);
         page.add(LocationGroup);
         window.add(page);
     }

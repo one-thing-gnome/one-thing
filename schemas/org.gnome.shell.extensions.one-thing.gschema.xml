@@ -15,8 +15,11 @@
     <key name="thing-value" type="s">
       <default>'One Thing'</default>
     </key>
+    <key name="hot-key" type="b">
+      <default>true</default>
+    </key>
     <key type="as" name="activate-onething">
-      <default><![CDATA[['<Alt>W']]]></default>
+      <default><![CDATA[['<Super>W']]]></default>
       <summary>Activate Onething</summary>
     </key>
   </schema>
