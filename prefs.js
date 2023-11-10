@@ -1,13 +1,17 @@
 import Adw from 'gi://Adw';
 import Gio from 'gi://Gio';
 import Gtk from 'gi://Gtk';
-import {ExtensionPreferences} from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
+import {ExtensionPreferences, gettext} from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
+
+import ShortcutRow from './prefs/hotkey.js';
 
 const BindFlags = Gio.SettingsBindFlags.DEFAULT;
 
 export default class OneThingGnomeExtensionPreferences extends ExtensionPreferences {
     fillPreferencesWindow(window) {
         window._settings = this.getSettings();
+        window._gettext = gettext;
+
         const page = new Adw.PreferencesPage();
 
         const customTextGroup = new Adw.PreferencesGroup();
@@ -41,6 +45,7 @@ export default class OneThingGnomeExtensionPreferences extends ExtensionPreferen
             title: 'Allow HotKey (Super+W by default)',
         });
         HotKeyGroup.add(hotKeyRow);
+        HotKeyGroup.add(new ShortcutRow(window._settings, window._gettext));
 
         const LocationGroup = new Adw.PreferencesGroup({
             title: 'Location',
