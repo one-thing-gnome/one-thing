@@ -28,20 +28,28 @@ dconf write /org/gnome/shell/extensions/one-thing/thing-value "'My todo'"
 
   <img src="./.github/screenshots/one-thing_3.png" alt="drawing" width="600"/>
 
-## Development
 
-### Create Zip File to be published
+### Development
 
-```
-zip -r one-thing@github.com.zip * -x .git/* .github/* Makefile README.md
-```
+**Manual installation (great for development)**
 
-### Manual installation notes (great for development)
-
-- Run **make** (or **make all**) from the project folder to compile the schema
-- Place the folder in **~/.local/share/gnome-shell/extensions**
+- Place this folder in **~/.local/share/gnome-shell/extensions**
 - Rename the folder to **one-thing<span>@</span>github.com** so the gnome
   shell will find it
-- Makefile, .gitignore and this file can be deleted (optional)
-- Reset the gnome shell (if under X11 then press **Alt-F2** and then submit the
-  **r** command; else if under Wayland then log out and log back in)
+- **Debug extension:**
+  * X11: Reload gnome shell by pressing **Alt-F2** and then submit the
+    **r** command
+  * Wayland: To avoid restarting your computer, you can create nested session with:
+    ```
+    dbus-run-session -- gnome-shell --nested --wayland
+    ```
+
+### Create Zip file to publish
+
+Run:
+
+```
+npm run pack
+```
+
+it will create `one-thing@github.com.zip` to upload to the gnome extension store.
