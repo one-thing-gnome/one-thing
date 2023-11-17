@@ -20,25 +20,20 @@ var LOCATION_BY_INDEX = {
 };
 
 export default class OneThingGnome extends Extension {
-    constructor(metadata) {
-        super(metadata);
-        this._injectionManager = new InjectionManager();
-    }
-
     enable() {
+        this._injectionManager = new InjectionManager();
         this._settings = this.getSettings();
         this._dir = this.dir;
 
         // grab key focus after 100ms delay
         this._injectionManager.overrideMethod(PanelMenu.Button.prototype, '_onOpenStateChanged',
-            originalMethod => {
-                return args => {
+            () => {
+                return () => {
                     if (widget.menu.isOpen) {
-                        setTimeout(() => {
+                        this._timeoutId = setTimeout(() => {
                             widget._oneThing();
                         }, 100);
                     }
-                    originalMethod.call(widget, ...args);
                 };
             });
         //
@@ -111,6 +106,11 @@ export default class OneThingGnome extends Extension {
         try {
             if (this._actorAddedSignal)
                 Main.panel._rightBox.disconnect(this._actorAddedSignal);
+
+            if (this._timeoutId) {
+                clearTimeout(this._timeoutId);
+                this._timeoutId = null;
+            }
 
             if (widget) {
                 widget.destroy();
