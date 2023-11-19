@@ -1,13 +1,17 @@
 import Adw from 'gi://Adw';
 import Gio from 'gi://Gio';
 import Gtk from 'gi://Gtk';
-import {ExtensionPreferences} from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
+import {ExtensionPreferences, gettext} from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
+
+import ShortcutRow from './prefs/hotkey.js';
 
 const BindFlags = Gio.SettingsBindFlags.DEFAULT;
 
 export default class OneThingGnomeExtensionPreferences extends ExtensionPreferences {
     fillPreferencesWindow(window) {
         window._settings = this.getSettings();
+        window._gettext = gettext;
+
         const page = new Adw.PreferencesPage();
 
         const customTextGroup = new Adw.PreferencesGroup();
@@ -32,6 +36,16 @@ export default class OneThingGnomeExtensionPreferences extends ExtensionPreferen
             subtitle: 'You can always access it in Extensions',
         });
         SettingsGroup.add(switchRow);
+
+        const HotKeyGroup = new Adw.PreferencesGroup({
+            title: 'Hot Key',
+        });
+
+        const hotKeyRow = new Adw.SwitchRow({
+            title: 'Allow HotKey (Super+W by default)',
+        });
+        HotKeyGroup.add(hotKeyRow);
+        HotKeyGroup.add(new ShortcutRow(window._settings, window._gettext));
 
         const LocationGroup = new Adw.PreferencesGroup({
             title: 'Location',
@@ -77,6 +91,7 @@ export default class OneThingGnomeExtensionPreferences extends ExtensionPreferen
         LocationGroup.add(locationRow);
 
         window._settings.bind('show-settings-button-on-popup', switchRow, 'active', BindFlags);
+        window._settings.bind('hot-key', hotKeyRow, 'active', BindFlags);
         window._settings.bind('index-in-status-bar', indexRow, 'value', BindFlags);
 
         switch (window._settings.get_int('location-in-status-bar')) {
@@ -106,6 +121,7 @@ export default class OneThingGnomeExtensionPreferences extends ExtensionPreferen
 
         page.add(customTextGroup);
         page.add(SettingsGroup);
+        page.add(HotKeyGroup);
         page.add(LocationGroup);
         window.add(page);
     }

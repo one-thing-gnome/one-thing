@@ -1,20 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schemalist>
   <schema id="org.gnome.shell.extensions.one-thing" path="/org/gnome/shell/extensions/one-thing/">
-    <!-- See also: https://developer.gnome.org/glib/stable/gvariant-format-strings.html -->
     <key name="show-settings-button-on-popup" type="b">
       <default>true</default>
     </key>
     <!-- Values: 0(Left), 1(Center), 2(Right) -->
-    <key name="location-in-status-bar" type="i" >
-        <default>2</default>
-        <range min="0" max="2"/>
+    <key name="location-in-status-bar" type="i">
+      <default>2</default>
+      <range min="0" max="2"/>
     </key>
     <key name="index-in-status-bar" type="i">
       <default>0</default>
     </key>
     <key name="thing-value" type="s">
       <default>'One Thing'</default>
+    </key>
+    <key name="hot-key" type="b">
+      <default>true</default>
+    </key>
+    <key type="as" name="activate-onething">
+      <default><![CDATA[['<Super>W']]]></default>
+      <summary>Activate Onething</summary>
     </key>
   </schema>
 </schemalist>

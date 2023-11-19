@@ -1,11 +1,16 @@
+import Meta from 'gi://Meta';
+import Shell from 'gi://Shell';
+
 import * as Main from 'resource:///org/gnome/shell/ui/main.js';
-import {Extension} from 'resource:///org/gnome/shell/extensions/extension.js';
+import {Extension, InjectionManager} from 'resource:///org/gnome/shell/extensions/extension.js';
+import * as PanelMenu from 'resource:///org/gnome/shell/ui/panelMenu.js';
 
 import Widget from './widget.js';
 
 let widget;
 
 var thingValueChanged = null;
+var hotKey = null;
 var indexChanged = null;
 var locationChanged = null;
 var LOCATION_BY_INDEX = {
@@ -16,17 +21,36 @@ var LOCATION_BY_INDEX = {
 
 export default class OneThingGnome extends Extension {
     enable() {
+        this._injectionManager = new InjectionManager();
         this._settings = this.getSettings();
         this._dir = this.dir;
 
-        [thingValueChanged, indexChanged, locationChanged] = [
+        // grab key focus after 100ms delay
+        this._injectionManager.overrideMethod(PanelMenu.Button.prototype, '_onOpenStateChanged',
+            () => {
+                return () => {
+                    if (widget.menu.isOpen) {
+                        this._timeoutId = setTimeout(() => {
+                            widget._oneThing();
+                        }, 100);
+                    }
+                };
+            });
+        //
+
+        [thingValueChanged, hotKey, indexChanged, locationChanged] = [
             'thing-value',
+            'hot-key',
             'index-in-status-bar',
             'location-in-status-bar',
         ].map(key => {
             if (key === 'thing-value') {
                 return this._settings.connect(`changed::${key}`, () => {
                     widget._showIconIfTextEmpty(this._settings.get_string('thing-value'));
+                });
+            } else if (key === 'hot-key') {
+                return this._settings.connect(`changed::${key}`, () => {
+                    this._addKeybinding();
                 });
             }
             return this._settings.connect(`changed::${key}`, () => {
@@ -35,6 +59,24 @@ export default class OneThingGnome extends Extension {
         });
 
         this._insertChildToPanel();
+
+        this._addKeybinding();
+    }
+
+    _addKeybinding() {
+        const shallTurnOnHotKey = this._settings.get_boolean('hot-key');
+        if (!shallTurnOnHotKey) {
+            Main.wm.removeKeybinding('activate-onething');
+            return;
+        }
+
+        Main.wm.addKeybinding(
+            'activate-onething',
+            this._settings,
+            Meta.KeyBindingFlags.IGNORE_AUTOREPEAT,
+            Shell.ActionMode.NORMAL | Shell.ActionMode.OVERVIEW,
+            () => widget.menu.open()
+        );
     }
 
     _checkIfRightBoxIsSelected() {
@@ -65,6 +107,11 @@ export default class OneThingGnome extends Extension {
             if (this._actorAddedSignal)
                 Main.panel._rightBox.disconnect(this._actorAddedSignal);
 
+            if (this._timeoutId) {
+                clearTimeout(this._timeoutId);
+                this._timeoutId = null;
+            }
+
             if (widget) {
                 widget.destroy();
                 widget = null;
@@ -76,13 +123,18 @@ export default class OneThingGnome extends Extension {
     }
 
     disable() {
+        this._injectionManager.clear();
+
         this._destroyWidgetFromPanel();
 
         // Disconnect
         this._settings.disconnect(thingValueChanged);
+        this._settings.disconnect(hotKey);
         this._settings.disconnect(indexChanged);
         this._settings.disconnect(locationChanged);
 
         this._settings = null;
+
+        Main.wm.removeKeybinding('activate-onething');
     }
 }

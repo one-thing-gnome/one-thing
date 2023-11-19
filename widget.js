@@ -67,7 +67,6 @@ const Widget = new GObject.registerClass(
                     icon_name: 'preferences-system-symbolic',
                     icon_size: 16,
                 }),
-
             });
 
             this.inputText.connect('secondary-icon-clicked', () => {
@@ -117,17 +116,23 @@ const Widget = new GObject.registerClass(
         _initEvents() {
             this.connect(
                 'button-press-event',
-                () => {
-                    if (this.menu.isOpen)
-                        this.inputText.grab_key_focus();
-
-                    this.inputText.set_text(this._settings.get_string('thing-value'));
-                }
+                () => this._oneThing()
             );
+
             this.inputText.clutter_text.connect(
                 'activate',
                 this._onActivateEntry.bind(this)
             );
+        }
+
+        _oneThing() {
+            let text = this._settings.get_string('thing-value');
+            if (this.menu.isOpen) {
+                this.inputText.grab_key_focus();
+                this.inputText.set_text(text);
+                if (text)
+                    this.inputText.clutter_text.set_selection(-1, 0);
+            }
         }
 
         _onActivateEntry(actor) {

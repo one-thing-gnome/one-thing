@@ -1,13 +1,7 @@
 {
-  "name": "one-thing-gnome",
-  "version": "1.0.0",
-  "description": "one-thing-gnome",
-  "main": "extension.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "",
-  "license": "ISC",
+	"scripts": {
+		"pack": "rm -rf one-thing@github.com.zip && zip one-thing@github.com.zip LICENSE assets/* entryMenu.js extension.js metadata.json prefs.js prefs/* schemas/* stylesheet.css widget.js"
+	},
   "devDependencies": {
     "eslint-plugin-jsdoc": "^46.8.2"
   }

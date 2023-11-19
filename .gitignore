@@ -1,3 +1,5 @@
 node_modules
 schemas/gschemas.compiled
 *.zip
+one-thing@github.com
+.DS_Store
