@@ -2,7 +2,7 @@ import Meta from 'gi://Meta';
 import Shell from 'gi://Shell';
 
 import * as Main from 'resource:///org/gnome/shell/ui/main.js';
-import {Extension, InjectionManager} from 'resource:///org/gnome/shell/extensions/extension.js';
+import { Extension, InjectionManager } from 'resource:///org/gnome/shell/extensions/extension.js';
 import * as PanelMenu from 'resource:///org/gnome/shell/ui/panelMenu.js';
 
 import Widget from './widget.js';
@@ -124,6 +124,7 @@ export default class OneThingGnome extends Extension {
 
     disable() {
         this._injectionManager.clear();
+        this._injectionManager = null;
 
         this._destroyWidgetFromPanel();
 
