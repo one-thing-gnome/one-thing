@@ -3,7 +3,8 @@
   "name": "One Thing",
   "settings-schema": "org.gnome.shell.extensions.one-thing",
   "shell-version": [
-    "45"
+    "45",
+		"46"
   ],
   "url": "https://github.com/dantehemerson/one-thing",
   "uuid": "one-thing@github.com",
