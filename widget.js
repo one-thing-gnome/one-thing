@@ -121,7 +121,11 @@ const Widget = new GObject.registerClass(
             const textValue = this.panelText.get_text();
             this._showIconIfTextEmpty(textValue);
 
-            this.add_actor(oneThingContainer);
+            if (typeof this.add_child === 'function') {
+                this.add_child(oneThingContainer);
+            } else {
+                this.add_actor(oneThingContainer);
+            }
         }
 
         _initEvents() {
