@@ -86,7 +86,12 @@ const Widget = new GObject.registerClass(
                 reactive: false,
             });
 
-            menuItem.add_actor(this.inputText);
+            if (typeof menuItem.add_child === 'function') {
+                menuItem.add_child(this.inputText);
+            } else if (typeof menuItem.add_actor === 'function') {
+                menuItem.add_actor(this.inputText);
+            }
+
             this.menu.addMenuItem(menuItem);
         }
 

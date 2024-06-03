@@ -42,7 +42,12 @@ export class EntryMenu extends PopupMenu.PopupMenu {
         });
         this.addMenuItem(item);
 
-        Main.uiGroup.add_actor(this.actor);
+        if (typeof Main.uiGroup.add_child === 'function') {
+            Main.uiGroup.add_child(this.actor);
+        } else if (typeof Main.uiGroup.add_actor === 'function') {
+            Main.uiGroup.add_actor(this.actor);
+        }
+
         this.actor.hide();
     }
 

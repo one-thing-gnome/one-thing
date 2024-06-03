@@ -4,6 +4,10 @@ import Shell from 'gi://Shell';
 import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 import {Extension, InjectionManager} from 'resource:///org/gnome/shell/extensions/extension.js';
 import * as PanelMenu from 'resource:///org/gnome/shell/ui/panelMenu.js';
+import * as Config from 'resource:///org/gnome/shell/misc/config.js';
+
+const [major] = Config.PACKAGE_VERSION.split('.');
+const GNOME_MAJOR_VERSION = Number.parseInt(major);
 
 import Widget from './widget.js';
 
@@ -82,7 +86,9 @@ export default class OneThingGnome extends Extension {
     _checkIfRightBoxIsSelected() {
         let isRightBoxChosen = this._settings.get_int('location-in-status-bar') === 2;
         if (isRightBoxChosen) {
-            this._actorAddedSignal = Main.panel._rightBox.connect('actor-added', () => {
+            const childAddedName = GNOME_MAJOR_VERSION >= 46 ? 'child-added' : 'actor-added';
+            this._actorAddedSignal = Main.panel._rightBox.connect(childAddedName
+                , () => {
                 this._insertChildToPanel();
             });
         }
