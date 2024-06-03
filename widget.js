@@ -88,7 +88,7 @@ const Widget = new GObject.registerClass(
 
             if (typeof menuItem.add_child === 'function') {
                 menuItem.add_child(this.inputText);
-            } else if (typeof menuItem.add_actor === 'function') {
+            } else {
                 menuItem.add_actor(this.inputText);
             }
 
@@ -109,8 +109,14 @@ const Widget = new GObject.registerClass(
                 gicon: Gio.icon_new_for_string(path),
             });
 
-            oneThingContainer.add(this.icon);
-            oneThingContainer.add(this.panelText);
+            if (typeof oneThingContainer.add_child === 'function') {
+                oneThingContainer.add_child(this.icon);
+                oneThingContainer.add_child(this.panelText);
+            } else {
+                oneThingContainer.add(this.icon);
+                oneThingContainer.add(this.panelText);
+            }
+
 
             const textValue = this.panelText.get_text();
             this._showIconIfTextEmpty(textValue);
