@@ -36,6 +36,10 @@ dconf write /org/gnome/shell/extensions/one-thing/thing-value "'My todo'"
 - Place this folder in **~/.local/share/gnome-shell/extensions**
 - Rename the folder to **one-thing<span>@</span>github.com** so the gnome
   shell will find it
+- Build schemas with:
+  ```
+  npm run build-schemas
+  ```
 - **Debug extension:**
   * X11: Reload gnome shell by pressing **Alt-F2** and then submit the
     **r** command

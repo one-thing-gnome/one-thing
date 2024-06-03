@@ -1,6 +1,7 @@
 {
 	"scripts": {
-		"pack": "rm -rf one-thing@github.com.zip && zip one-thing@github.com.zip LICENSE assets/* entryMenu.js extension.js metadata.json prefs.js prefs/* schemas/* stylesheet.css widget.js"
+    "build-schemas": "make",
+		"pack": "rm -rf one-thing@github.com.zip && zip one-thing@github.com.zip LICENSE assets/* entryMenu.js extension.js metadata.json prefs.js prefs/* schemas/*.xml stylesheet.css widget.js"
 	},
   "devDependencies": {
     "eslint-plugin-jsdoc": "^46.8.2"
