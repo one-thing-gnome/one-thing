@@ -4,10 +4,11 @@
   "settings-schema": "org.gnome.shell.extensions.one-thing",
   "shell-version": [
     "45",
-		"46",
-    "47"
+    "46",
+    "47",
+    "48"
   ],
   "url": "https://github.com/dantehemerson/one-thing",
   "uuid": "one-thing@github.com",
-  "version": 16
+  "version": 17
 }
