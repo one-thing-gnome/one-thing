@@ -23,7 +23,8 @@ clean:
 	rm -f schemas/gschemas.compiled
 
 install: ${BUNDLE}
-	rm -fr "${PREFIX}/share/gnome-shell/extensions/${BUNDLE}"
-	unzip  -q "${BUNDLE}" -d "${PREFIX}/share/gnome-shell/extensions/${BUNDLE}"
+	@touch "${PREFIX}/share/gnome-shell/extensions/${UUID}"
+	rm -r "${PREFIX}/share/gnome-shell/extensions/${UUID}"
+	unzip  -q "${BUNDLE}" -d "${PREFIX}/share/gnome-shell/extensions/${UUID}"
 
 schemas: schemas/gschemas.compile
