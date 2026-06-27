@@ -121,11 +121,10 @@ jobs:
           # --force handles the case where the branch already exists on the remote
           git push origin "$BRANCH" --force
 
-          # || true: no-op if a PR for this branch already exists (e.g. re-run after partial failure)
           gh pr create \
             --title "$TITLE" \
             --body "GNOME Shell **v${LATEST}** has been released. This PR adds \`\"${LATEST}\"\` to the \`shell-version\` array in \`metadata.json\`.
 
           Please verify compatibility and make any necessary adjustments before merging." \
             --head "$BRANCH" \
-            --base main || true
+            --base main
