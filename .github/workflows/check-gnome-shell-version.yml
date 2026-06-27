@@ -125,6 +125,8 @@ jobs:
             --title "$TITLE" \
             --body "GNOME Shell **v${LATEST}** has been released. This PR adds \`\"${LATEST}\"\` to the \`shell-version\` array in \`metadata.json\`.
 
+          Release page: https://gitlab.gnome.org/GNOME/gnome-shell/-/releases/${LATEST}.0
+
           Please verify compatibility and make any necessary adjustments before merging." \
             --head "$BRANCH" \
             --base main
