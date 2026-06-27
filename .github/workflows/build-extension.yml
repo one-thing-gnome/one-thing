@@ -12,12 +12,12 @@ jobs:
       - name: Install glib-compile-schemas
         run: sudo apt-get install -y --no-install-recommends libglib2.0-bin
 
-      - name: Build zip
-        run: make
+      - name: Build bundle directory
+        run: make bundle-dir
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: one-thing@github.com
-          path: one-thing@github.com.zip
+          path: bundle/
           retention-days: 1
