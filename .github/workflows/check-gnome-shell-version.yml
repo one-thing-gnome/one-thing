@@ -112,15 +112,20 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          git checkout -b "$BRANCH"
+          # -B resets the branch to current HEAD if it already exists locally
+          git checkout -B "$BRANCH"
           git add metadata.json
           git commit -m "$TITLE"
-          git push origin "$BRANCH"
+          # Set authenticated remote URL so force-push works with GITHUB_TOKEN
+          git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git"
+          # --force handles the case where the branch already exists on the remote
+          git push origin "$BRANCH" --force
 
+          # || true: no-op if a PR for this branch already exists (e.g. re-run after partial failure)
           gh pr create \
             --title "$TITLE" \
             --body "GNOME Shell **v${LATEST}** has been released. This PR adds \`\"${LATEST}\"\` to the \`shell-version\` array in \`metadata.json\`.
 
           Please verify compatibility and make any necessary adjustments before merging." \
             --head "$BRANCH" \
-            --base main
+            --base main || true
