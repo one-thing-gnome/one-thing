@@ -1,0 +1,126 @@
+name: Check GNOME Shell Version
+
+on:
+  schedule:
+    - cron: '0 9 * * *'  # daily at 09:00 UTC
+  workflow_dispatch:       # allow manual trigger
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  check-version:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Fetch latest GNOME Shell major version from GitLab
+        id: gnome
+        run: |
+          # Fetch tags (sorted newest-first by the API)
+          TAGS=$(curl -sf "https://gitlab.gnome.org/api/v4/projects/gnome%2Fgnome-shell/repository/tags?per_page=100")
+
+          # Extract major versions from stable tags only (e.g. "50.2", "49.7")
+          # Skip anything with alpha/beta/rc or non-numeric formats
+          LATEST_MAJOR=$(echo "$TAGS" | jq -r '
+            [
+              .[]
+              | select(.name | test("^[0-9]+\\.[0-9]+$"))
+              | .name
+              | split(".")[0]
+              | tonumber
+            ]
+            | max
+          ')
+
+          echo "latest_major=$LATEST_MAJOR" >> "$GITHUB_OUTPUT"
+          echo "Latest GNOME Shell major version: $LATEST_MAJOR"
+
+      - name: Read current max shell-version from metadata.json
+        id: current
+        run: |
+          CURRENT_MAX=$(jq '[.["shell-version"][] | tonumber] | max' metadata.json)
+          echo "current_max=$CURRENT_MAX" >> "$GITHUB_OUTPUT"
+          echo "Current max shell-version in metadata.json: $CURRENT_MAX"
+
+      - name: Check if update is needed
+        id: check
+        run: |
+          LATEST=${{ steps.gnome.outputs.latest_major }}
+          CURRENT=${{ steps.current.outputs.current_max }}
+
+          if [ "$LATEST" -gt "$CURRENT" ]; then
+            echo "needed=true" >> "$GITHUB_OUTPUT"
+            echo "New major version detected: $LATEST (current: $CURRENT)"
+          else
+            echo "needed=false" >> "$GITHUB_OUTPUT"
+            echo "Already up to date (latest: $LATEST, current: $CURRENT)"
+          fi
+
+      - name: Check for existing open PR
+        id: pr_check
+        if: steps.check.outputs.needed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          LATEST=${{ steps.gnome.outputs.latest_major }}
+          TITLE="chore: Update to gnome-shell v${LATEST}"
+
+          EXISTING=$(gh pr list \
+            --state open \
+            --search "${TITLE} in:title" \
+            --json title \
+            --jq "map(select(.title == \"${TITLE}\")) | length")
+
+          if [ "$EXISTING" -gt 0 ]; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+            echo "PR already exists: $TITLE"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+            echo "No existing PR found for: $TITLE"
+          fi
+
+      - name: Update metadata.json
+        if: steps.check.outputs.needed == 'true' && steps.pr_check.outputs.exists == 'false'
+        run: |
+          LATEST=${{ steps.gnome.outputs.latest_major }}
+
+          # Append the new version string to shell-version array, keep sorted
+          jq --arg v "$LATEST" '
+            .["shell-version"] = (
+              .["shell-version"] + [$v]
+              | map(tonumber)
+              | sort
+              | map(tostring)
+            )
+          ' metadata.json > metadata.json.tmp && mv metadata.json.tmp metadata.json
+
+          echo "Updated metadata.json:"
+          cat metadata.json
+
+      - name: Create branch and open PR
+        if: steps.check.outputs.needed == 'true' && steps.pr_check.outputs.exists == 'false'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          LATEST=${{ steps.gnome.outputs.latest_major }}
+          BRANCH="chore/gnome-shell-v${LATEST}"
+          TITLE="chore: Update to gnome-shell v${LATEST}"
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git checkout -b "$BRANCH"
+          git add metadata.json
+          git commit -m "$TITLE"
+          git push origin "$BRANCH"
+
+          gh pr create \
+            --title "$TITLE" \
+            --body "GNOME Shell **v${LATEST}** has been released. This PR adds \`\"${LATEST}\"\` to the \`shell-version\` array in \`metadata.json\`.
+
+          Please verify compatibility and make any necessary adjustments before merging." \
+            --head "$BRANCH" \
+            --base main
