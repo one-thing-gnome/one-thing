@@ -13,13 +13,13 @@ SOURCES = ${ASSETS} ${SCHEMAS} LICENSE entryMenu.js extension.js \
 	  schemas/org.gnome.shell.extensions.one-thing.gschema.xml \
 	  stylesheet.css widget.js
 
-${BUNDLE}: bundle-dir
+${BUNDLE}: schemas/gschemas.compiled bundle-dir
 	cd ${BUNDLE_DIR} && zip -qr "../$@" .
 
-bundle-dir: ${SOURCES} schemas/gschemas.compiled
+bundle-dir: ${SOURCES}
 	mkdir -p ${BUNDLE_DIR}/assets ${BUNDLE_DIR}/schemas ${BUNDLE_DIR}/prefs
 	cp assets/* ${BUNDLE_DIR}/assets/
-	cp schemas/*.xml schemas/gschemas.compiled ${BUNDLE_DIR}/schemas/
+	cp schemas/*.xml ${BUNDLE_DIR}/schemas/
 	cp prefs/hotkey.js ${BUNDLE_DIR}/prefs/
 	cp LICENSE entryMenu.js extension.js metadata.json prefs.js stylesheet.css widget.js ${BUNDLE_DIR}/
 
