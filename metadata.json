@@ -1,5 +1,5 @@
 {
-  "description": "Put a single task or goal in your menu bar.\n\nThe text entries support Copy/Paste through their context menu, so this extension reads from and writes to the system clipboard when you explicitly use those menu items. Clipboard data never leaves your machine.",
+  "description": "Put a single task or goal in your menu bar",
   "name": "One Thing",
   "settings-schema": "org.gnome.shell.extensions.one-thing",
   "shell-version": [
