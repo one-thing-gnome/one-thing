@@ -102,7 +102,7 @@ export default class OneThingGnome extends Extension {
 
         this._destroyWidgetFromPanel();
 
-        widget = new Widget(this._settings, this._dir);
+        widget = new Widget(this, this._settings, this._dir);
         Main.panel.addToStatusArea('one-thing', widget, index, location);
 
         this._checkIfRightBoxIsSelected();

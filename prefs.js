@@ -63,31 +63,31 @@ export default class OneThingGnomeExtensionPreferences extends ExtensionPreferen
         });
         LocationGroup.add(indexRow);
 
-        this._button_box = new Gtk.Box({
+        const buttonBox = new Gtk.Box({
             orientation: Gtk.Orientation.HORIZONTAL,
             valign: Gtk.Align.CENTER,
         });
-        this._button_box.add_css_class('linked');
+        buttonBox.add_css_class('linked');
 
-        this._leftButton = new Gtk.ToggleButton({
+        const leftButton = new Gtk.ToggleButton({
             label: 'Left',
         });
-        this._centerButton = new Gtk.ToggleButton({
+        const centerButton = new Gtk.ToggleButton({
             label: 'Center',
-            group: this._leftButton,
+            group: leftButton,
         });
-        this._rightButton = new Gtk.ToggleButton({
+        const rightButton = new Gtk.ToggleButton({
             label: 'Right',
-            group: this._leftButton,
+            group: leftButton,
         });
-        this._button_box.append(this._leftButton);
-        this._button_box.append(this._centerButton);
-        this._button_box.append(this._rightButton);
+        buttonBox.append(leftButton);
+        buttonBox.append(centerButton);
+        buttonBox.append(rightButton);
 
         const locationRow = new Adw.ActionRow({
             title: 'Location in Panel',
         });
-        locationRow.add_suffix(this._button_box);
+        locationRow.add_suffix(buttonBox);
         LocationGroup.add(locationRow);
 
         window._settings.bind('show-settings-button-on-popup', switchRow, 'active', BindFlags);
@@ -96,28 +96,28 @@ export default class OneThingGnomeExtensionPreferences extends ExtensionPreferen
 
         switch (window._settings.get_int('location-in-status-bar')) {
         case 0:
-            this._leftButton.set_active(true);
+            leftButton.set_active(true);
             break;
         case 1:
-            this._centerButton.set_active(true);
+            centerButton.set_active(true);
             break;
         case 2:
-            this._rightButton.set_active(true);
+            rightButton.set_active(true);
             break;
         }
 
         const locationChanged = () => {
-            if (this._leftButton.get_active() === true)
+            if (leftButton.get_active() === true)
                 window._settings.set_int('location-in-status-bar', 0);
-            else if (this._centerButton.get_active() === true)
+            else if (centerButton.get_active() === true)
                 window._settings.set_int('location-in-status-bar', 1);
-            else if (this._rightButton.get_active() === true)
+            else if (rightButton.get_active() === true)
                 window._settings.set_int('location-in-status-bar', 2);
         };
 
-        this._leftButton.connect('notify::active', locationChanged);
-        this._centerButton.connect('notify::active', locationChanged);
-        this._rightButton.connect('notify::active', locationChanged);
+        leftButton.connect('notify::active', locationChanged);
+        centerButton.connect('notify::active', locationChanged);
+        rightButton.connect('notify::active', locationChanged);
 
         page.add(customTextGroup);
         page.add(SettingsGroup);

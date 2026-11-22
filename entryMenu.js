@@ -13,15 +13,15 @@ import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 import * as Params from 'resource:///org/gnome/shell/misc/params.js';
 import * as PopupMenu from 'resource:///org/gnome/shell/ui/popupMenu.js';
 import {BoxPointer} from 'resource:///org/gnome/shell/ui/boxpointer.js';
-import {Extension, gettext as _} from 'resource:///org/gnome/shell/extensions/extension.js';
+import {gettext as _} from 'resource:///org/gnome/shell/extensions/extension.js';
 
 export class EntryMenu extends PopupMenu.PopupMenu {
-    constructor(entry) {
+    constructor(entry, extension) {
         super(entry, 0, St.Side.TOP);
 
         this._entry = entry;
         this._clipboard = St.Clipboard.get_default();
-        this._extension = Extension.lookupByURL(import.meta.url);
+        this._extension = extension;
 
         // Populate menu
         let item;
@@ -140,14 +140,15 @@ function _onPopup(actor, entry) {
 /**
  *
  * @param {object} entry entry
+ * @param {object} extension the extension instance
  * @param {object} params params
  */
-export function _addContextMenu(entry, params) {
+export function _addContextMenu(entry, extension, params) {
     if (entry.menu)
         return;
     params = Params.parse(params, {actionMode: Shell.ActionMode.POPUP});
 
-    entry.menu = new EntryMenu(entry);
+    entry.menu = new EntryMenu(entry, extension);
     entry._menuManager = new PopupMenu.PopupMenuManager(entry, {
         actionMode: params.actionMode,
     });

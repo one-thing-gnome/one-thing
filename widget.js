@@ -6,25 +6,23 @@ import Clutter from 'gi://Clutter';
 import * as PanelMenu from 'resource:///org/gnome/shell/ui/panelMenu.js';
 import * as PopupMenu from 'resource:///org/gnome/shell/ui/popupMenu.js';
 
-import {Extension} from 'resource:///org/gnome/shell/extensions/extension.js';
-
 import {_addContextMenu} from './entryMenu.js';
 
 const Widget = new GObject.registerClass(
     class Widget extends PanelMenu.Button {
-        _init(settings, dir) {
+        _init(extension, settings, dir) {
             super._init(0, 'AppWidget', false);
-            this._initialize(settings, dir);
+            this._initialize(extension, settings, dir);
         }
 
-        _initialize(s, dir) {
+        _initialize(ext, s, dir) {
             if (this.initialized)
                 return;
 
             this.initialized = true;
+            this._e = ext;
             this._settings = s;
             this._dir = dir;
-            this._e = Extension.lookupByURL(import.meta.url);
 
             this._initEntry();
             this._initPopup();
@@ -41,7 +39,7 @@ const Widget = new GObject.registerClass(
                 style_class: 'one-thing-panel-text',
             });
 
-            _addContextMenu(this.panelText);
+            _addContextMenu(this.panelText, this._e);
 
             this._settings.bind(
                 'thing-value',
@@ -80,7 +78,7 @@ const Widget = new GObject.registerClass(
                 Gio.SettingsBindFlags.DEFAULT
             );
 
-            _addContextMenu(this.inputText);
+            _addContextMenu(this.inputText, this._e);
 
             const menuItem = new PopupMenu.PopupBaseMenuItem({
                 reactive: false,
